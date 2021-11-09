@@ -28,6 +28,7 @@ namespace eShopSolution.Data.EF
         public EShopDbContext(DbContextOptions options) : base(options)
         {
         }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
 
