@@ -18,6 +18,7 @@ namespace eShopSolution.Data.Configurations
             builder.Property(x => x.ShipName).IsRequired().HasMaxLength(200);
             builder.Property(x => x.ShipEmail).IsRequired().IsUnicode(false).HasMaxLength(30);
             builder.Property(x => x.ShipPhoneNumber).IsRequired().HasMaxLength(200);
+            builder.HasOne(au => au.AppUser).WithMany(o => o.Orders).HasForeignKey(o => o.UserId);
         }
     }
 }
