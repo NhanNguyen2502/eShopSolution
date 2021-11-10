@@ -1,4 +1,4 @@
-# ASP.Net Core 5.0 
+# ASP.Net Core 3.1 
 ## Technologies
 - ASP.NET Core 3.1
 - Entity Framwork Core 3.1
