@@ -12,8 +12,7 @@ namespace eShopSolution.Data.Entities
         public decimal OriginalPrice { set; get; }
         public int Stock { set; get; }
         public int ViewCount { set; get; }
-        public DateTime DateCreated { set; get; }
-        public string SeoAlis { set; get; }
+        public DateTime DateCreated { set; get; }     
 
         public List<ProductInCategory> ProductInCategories { set; get; }
         public List<OrderDetail> OrderDetails { set; get; }
