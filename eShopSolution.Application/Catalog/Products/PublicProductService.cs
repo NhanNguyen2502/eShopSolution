@@ -17,7 +17,7 @@ namespace eShopSolution.Application.Catalog.Products
         {
             _Context = Context;
         }
-        public async Task<PagedResult<ProductViewModel>> IPublicProductService.GetAllCategory(GetProductPagingRequest request)
+        public async Task<PagedResult<ProductViewModel>> GetAllCategory(GetProductPagingRequest request)
         {
             // Step1: Select Join 
             var query = from p in _Context.Products
