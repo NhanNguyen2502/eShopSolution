@@ -20,3 +20,4 @@ namespace eShopSolutio.Utilities.Exceptions
         {
         }
     }
+}
