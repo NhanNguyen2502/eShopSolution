@@ -13,7 +13,7 @@ namespace eShopSolution.Data.Configurations
         {
             builder.ToTable("ProductTranlations");
             builder.HasKey(x => new { x.ProductId, x.LanguageId });
-            builder.HasOne(p => p.Product).WithMany(pt => pt.productTranslations).HasForeignKey(pt => pt.ProductId);
+            builder.HasOne(p => p.Product).WithMany(pt => pt.ProductTranslations).HasForeignKey(pt => pt.ProductId);
             builder.HasOne(l => l.Language).WithMany(pt => pt.ProductTranslations).HasForeignKey(pt => pt.LanguageId);
         }
     }
