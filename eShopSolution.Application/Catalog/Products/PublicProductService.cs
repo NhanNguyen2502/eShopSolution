@@ -7,18 +7,36 @@ using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using eShopSolution.ViewModels.Common;
 using eShopSolution.ViewModels.Catalog.Product;
-using eShopSolution.ViewModels.Catalog.Product.Public;
 
 namespace eShopSolution.Application.Catalog.Products
 {
-    class PublicProductService : IPublicProductService
+    public class PublicProductService : IPublicProductService
     {
         private readonly EShopDbContext _Context;
         public PublicProductService(EShopDbContext Context)
         {
             _Context = Context;
         }
-        public async Task<PagedResult<ProductViewModel>> GetAllCategory(GetProductPagingRequest request)
+
+        public async Task<List<ProductViewAllModel>> GetALL()
+        {
+            var query = from p in _Context.Products
+                        join pt in _Context.ProductTranslations on p.ID equals pt.ProductId
+                        select new { p, pt };
+            var data = await query.Select(x => new ProductViewAllModel()
+            {
+                ProductID = x.p.ID,
+                ProductName = x.p.ProductName,
+                ProductPrice = x.p.Price,
+                ProductOriginalPrice = x.p.OriginalPrice,
+                ProductStock = x.p.Stock,
+                ProductViewCount = x.p.ViewCount,
+                Description = x.pt.Description,
+            }).ToListAsync();
+            return data;
+        }
+
+        public async Task<PagedResult<ProductViewModel>> GetAllCategory(GetPublicProductPagingRequest request)
         {
             // Step1: Select Join 
             var query = from p in _Context.Products
