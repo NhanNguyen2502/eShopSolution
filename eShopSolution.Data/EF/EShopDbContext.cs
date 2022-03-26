@@ -12,7 +12,7 @@ namespace eShopSolution.Data.EF
 {
     public class EShopDbContext : IdentityDbContext<AppUser,AppRole,Guid>
     {
-
+       
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
         public DbSet<AppConfig> AppConfigs { get; set; }
