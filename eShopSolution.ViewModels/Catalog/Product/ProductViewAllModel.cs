@@ -13,6 +13,7 @@ namespace eShopSolution.ViewModels.Catalog.Product
         public int ProductStock { get; set; }
         public int ProductViewCount { get; set; }
         public string Description { get; set; }
+        public string Language { set; get; }
 
     }
 }

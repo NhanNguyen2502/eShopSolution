@@ -53,7 +53,6 @@ namespace eShopSolution.Data.Extensions
             modelBuilder.Entity<ProductTranslation>().HasData(
                 new ProductTranslation()
                 {
-                    Id = 1,
                     ProductId = 1,
                     Name = "Áo sơ mi nam trắng Việt Tiến",
                     LanguageId = "vi-VN",
@@ -65,7 +64,6 @@ namespace eShopSolution.Data.Extensions
                 },
                 new ProductTranslation()
                 {
-                     Id = 2,
                      ProductId = 1,
                      Name = "Viet Tien Men T-Shirt",
                      LanguageId = "en-US",
@@ -77,7 +75,7 @@ namespace eShopSolution.Data.Extensions
                 });
 
             modelBuilder.Entity<ProductInCategory>().HasData(
-                new ProductInCategory() { ProductId = 1, CategoryId = 1 },
+                new ProductInCategory() {  ProductId = 1, CategoryId = 1 },
                 new ProductInCategory() { ProductId = 2, CategoryId = 1 });
 
             // any guid

@@ -11,8 +11,8 @@ namespace eShopSolution.Data.Configurations
     {
         public void Configure(EntityTypeBuilder<ProductTranslation> builder)
         {
-            builder.ToTable("ProductTranlations");
-            builder.HasKey(x => new { x.ProductId, x.LanguageId });
+            builder.ToTable("ProductTranlations");            
+            builder.HasKey(x => new { x.ProductId, x.LanguageId});
             builder.HasOne(p => p.Product).WithMany(pt => pt.ProductTranslations).HasForeignKey(pt => pt.ProductId);
             builder.HasOne(l => l.Language).WithMany(pt => pt.ProductTranslations).HasForeignKey(pt => pt.LanguageId);
         }

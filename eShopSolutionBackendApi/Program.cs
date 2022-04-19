@@ -11,6 +11,7 @@ namespace eShopSolutionBackendApi
 {
     public class Program
     {
+        
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();
@@ -22,5 +23,6 @@ namespace eShopSolutionBackendApi
                 {
                     webBuilder.UseStartup<Startup>();
                 });
+        
     }
 }
