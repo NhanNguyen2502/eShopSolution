@@ -180,7 +180,7 @@ namespace eShopSolution.Data.Migrations
                         new
                         {
                             Id = new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
-                            ConcurrencyStamp = "e9c906eb-f552-4fa5-9aad-a5dd2a99638a",
+                            ConcurrencyStamp = "d6bc59c7-1b7c-4a4c-92a9-a8c3c63a637f",
                             Description = "Administrator role",
                             Name = "admin",
                             NormalizedName = "admin"
@@ -257,7 +257,7 @@ namespace eShopSolution.Data.Migrations
                         {
                             Id = new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                             AccessFailedCount = 0,
-                            ConcurrencyStamp = "7abe1aac-7d7b-4d58-8628-803434469587",
+                            ConcurrencyStamp = "efa158b6-bb52-48aa-9128-b89076b171d5",
                             Dob = new DateTime(2020, 1, 31, 0, 0, 0, 0, DateTimeKind.Unspecified),
                             Email = "tedu.international@gmail.com",
                             EmailConfirmed = true,
@@ -266,7 +266,7 @@ namespace eShopSolution.Data.Migrations
                             LockoutEnabled = false,
                             NormalizedEmail = "nguyenthahnhan98@gmail.com",
                             NormalizedUserName = "admin",
-                            PasswordHash = "AQAAAAEAACcQAAAAEFVlQQXdSHgTDMO3v4KkVobCjStEaRDrnGoO2CAzyXavr6L4WLZxCA8sUfM9PmhuYw==",
+                            PasswordHash = "AQAAAAEAACcQAAAAEO/q8RIOMDR8uZgjOa/oUxTZAFXmxwQX3xLYTN7P6ZK4AAa8Yy07JREIos2D1ZfAgw==",
                             PhoneNumberConfirmed = false,
                             SecurityStamp = "",
                             TwoFactorEnabled = false,
@@ -613,7 +613,7 @@ namespace eShopSolution.Data.Migrations
                         new
                         {
                             ID = 1,
-                            DateCreated = new DateTime(2021, 11, 20, 0, 56, 59, 652, DateTimeKind.Local).AddTicks(8106),
+                            DateCreated = new DateTime(2022, 4, 19, 14, 16, 6, 343, DateTimeKind.Local).AddTicks(5293),
                             OriginalPrice = 100000m,
                             Price = 200000m,
                             Stock = 0,
@@ -622,7 +622,7 @@ namespace eShopSolution.Data.Migrations
                         new
                         {
                             ID = 2,
-                            DateCreated = new DateTime(2021, 11, 20, 0, 56, 59, 654, DateTimeKind.Local).AddTicks(7103),
+                            DateCreated = new DateTime(2022, 4, 19, 14, 16, 6, 344, DateTimeKind.Local).AddTicks(7593),
                             OriginalPrice = 200000m,
                             Price = 300000m,
                             Stock = 0,
@@ -711,9 +711,6 @@ namespace eShopSolution.Data.Migrations
                     b.Property<string>("Details")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Id")
-                        .HasColumnType("int");
-
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
@@ -739,7 +736,6 @@ namespace eShopSolution.Data.Migrations
                             LanguageId = "vi-VN",
                             Description = "Áo sơ mi nam trắng Việt Tiến",
                             Details = "Áo sơ mi nam trắng Việt Tiến",
-                            Id = 1,
                             Name = "Áo sơ mi nam trắng Việt Tiến",
                             SeoAlias = "ao-so-mi-nam-trang-viet-tien",
                             SeoDescription = "Áo sơ mi nam trắng Việt Tiến",
@@ -751,7 +747,6 @@ namespace eShopSolution.Data.Migrations
                             LanguageId = "en-US",
                             Description = "Viet Tien Men T-Shirt",
                             Details = "Viet Tien Men T-Shirt",
-                            Id = 2,
                             Name = "Viet Tien Men T-Shirt",
                             SeoAlias = "viet-tien-men-t-shirt",
                             SeoDescription = "Viet Tien Men T-Shirt",
@@ -862,7 +857,7 @@ namespace eShopSolution.Data.Migrations
             modelBuilder.Entity("eShopSolution.Data.Entities.CategoryTranslation", b =>
                 {
                     b.HasOne("eShopSolution.Data.Entities.Category", "Category")
-                        .WithMany("categoryTranslations")
+                        .WithMany("CategoryTranslations")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -931,7 +926,7 @@ namespace eShopSolution.Data.Migrations
                         .IsRequired();
 
                     b.HasOne("eShopSolution.Data.Entities.Product", "Product")
-                        .WithMany("productTranslations")
+                        .WithMany("ProductTranslations")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();

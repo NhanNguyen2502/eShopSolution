@@ -8,8 +8,8 @@ namespace eShopSolution.Application.Common
 {
     public interface IStorageService
     {
-        string GetFileUrl(string filename);
-        Task SaveFileAsync(Stream mediaBinaryStream, string fileName);
-        Task DeleteFileAsync(string fileName);
+        public string GetFileUrl(string filename);
+        public Task SaveFileAsync(Stream mediaBinaryStream, string fileName);
+        public Task DeleteFileAsync(string fileName);
     }
 }

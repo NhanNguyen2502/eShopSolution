@@ -1,5 +1,8 @@
 {
   "ConnectionStrings": {
-    "eShopSolutionDb": "Server=.;Database=eShopSolution;Trusted_Connection=True;"
+    "eShopSolutionDb": "Server=.;Database=eShopSolution;Trusted_Connection=True;",
+    //"Data Source=SQL8001.site4now.net;Initial Catalog=db_a85c67_eshopsolution;User Id=db_a85c67_eshopsolution_admin;Password=nhan12588",
+    //"Server=.;Database=eShopSolution;Trusted_Connection=True;",
   }
+  
 }

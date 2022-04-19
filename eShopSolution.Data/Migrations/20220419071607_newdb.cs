@@ -3,31 +3,23 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace eShopSolution.Data.Migrations
 {
-    public partial class UpdateProductImage : Migration
+    public partial class newdb : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "OrderDate",
-                table: "Orders",
-                nullable: false,
-                oldClrType: typeof(DateTime),
-                oldType: "datetime2",
-                oldDefaultValue: new DateTime(2021, 11, 14, 1, 27, 27, 106, DateTimeKind.Local).AddTicks(3389));
-
             migrationBuilder.UpdateData(
                 table: "AppRoles",
                 keyColumn: "Id",
                 keyValue: new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
                 column: "ConcurrencyStamp",
-                value: "e9c906eb-f552-4fa5-9aad-a5dd2a99638a");
+                value: "d6bc59c7-1b7c-4a4c-92a9-a8c3c63a637f");
 
             migrationBuilder.UpdateData(
                 table: "AppUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash" },
-                values: new object[] { "7abe1aac-7d7b-4d58-8628-803434469587", "AQAAAAEAACcQAAAAEFVlQQXdSHgTDMO3v4KkVobCjStEaRDrnGoO2CAzyXavr6L4WLZxCA8sUfM9PmhuYw==" });
+                values: new object[] { "efa158b6-bb52-48aa-9128-b89076b171d5", "AQAAAAEAACcQAAAAEO/q8RIOMDR8uZgjOa/oUxTZAFXmxwQX3xLYTN7P6ZK4AAa8Yy07JREIos2D1ZfAgw==" });
 
             migrationBuilder.UpdateData(
                 table: "Categories",
@@ -48,39 +40,31 @@ namespace eShopSolution.Data.Migrations
                 keyColumn: "ID",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2021, 11, 20, 0, 56, 59, 652, DateTimeKind.Local).AddTicks(8106));
+                value: new DateTime(2022, 4, 19, 14, 16, 6, 343, DateTimeKind.Local).AddTicks(5293));
 
             migrationBuilder.UpdateData(
                 table: "Products",
                 keyColumn: "ID",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2021, 11, 20, 0, 56, 59, 654, DateTimeKind.Local).AddTicks(7103));
+                value: new DateTime(2022, 4, 19, 14, 16, 6, 344, DateTimeKind.Local).AddTicks(7593));
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AlterColumn<DateTime>(
-                name: "OrderDate",
-                table: "Orders",
-                type: "datetime2",
-                nullable: false,
-                defaultValue: new DateTime(2021, 11, 14, 1, 27, 27, 106, DateTimeKind.Local).AddTicks(3389),
-                oldClrType: typeof(DateTime));
-
             migrationBuilder.UpdateData(
                 table: "AppRoles",
                 keyColumn: "Id",
                 keyValue: new Guid("8d04dce2-969a-435d-bba4-df3f325983dc"),
                 column: "ConcurrencyStamp",
-                value: "4642c525-ebcc-468e-99eb-5d904f59e852");
+                value: "25cf9b9d-73b8-415c-a9a7-3ca7f32704b9");
 
             migrationBuilder.UpdateData(
                 table: "AppUsers",
                 keyColumn: "Id",
                 keyValue: new Guid("69bd714f-9576-45ba-b5b7-f00649be00de"),
                 columns: new[] { "ConcurrencyStamp", "PasswordHash" },
-                values: new object[] { "5c3e3b88-b19d-47c8-8f40-a55f55dbe634", "AQAAAAEAACcQAAAAEBUY+40XZEpYBsoqOuKYzAbDFdp5h/9AMOt8zv0zBSxi0mFPLo6ge8DjyFReIupPcw==" });
+                values: new object[] { "72777b45-ac31-47d7-9a09-0dd387cea501", "AQAAAAEAACcQAAAAEL1UoN3f+T5SkDdFKogpMpyYx1G8EV2152Qirhtow08zSi9IPSYbySCA9QmHNuDDZw==" });
 
             migrationBuilder.UpdateData(
                 table: "Categories",
@@ -101,14 +85,14 @@ namespace eShopSolution.Data.Migrations
                 keyColumn: "ID",
                 keyValue: 1,
                 column: "DateCreated",
-                value: new DateTime(2021, 11, 14, 1, 27, 27, 132, DateTimeKind.Local).AddTicks(3687));
+                value: new DateTime(2022, 4, 15, 16, 56, 56, 77, DateTimeKind.Local).AddTicks(5443));
 
             migrationBuilder.UpdateData(
                 table: "Products",
                 keyColumn: "ID",
                 keyValue: 2,
                 column: "DateCreated",
-                value: new DateTime(2021, 11, 14, 1, 27, 27, 132, DateTimeKind.Local).AddTicks(6182));
+                value: new DateTime(2022, 4, 15, 16, 56, 56, 78, DateTimeKind.Local).AddTicks(7967));
         }
     }
 }
