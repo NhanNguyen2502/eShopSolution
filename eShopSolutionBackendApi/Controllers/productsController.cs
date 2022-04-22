@@ -1,6 +1,7 @@
 ﻿using eShopSolution.Application.Catalog.Products;
 using eShopSolution.ViewModels.Catalog.Product;
 using eShopSolution.ViewModels.Catalog.ProductImages;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -8,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace eShopSolutionBackendApi.Controllers
 {
-    [EnableCors("MyAllowSpecificOrigins")]
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class productsController : ControllerBase
     {
         private IPublicProductService _PublicProductService;
@@ -25,7 +26,6 @@ namespace eShopSolutionBackendApi.Controllers
         [HttpGet("public-paging/{languageid}")]
         public async Task<IActionResult> GetAllPaging(string languageid, [FromQuery] GetPublicProductPagingRequest request)
         {
-
             try
             {
                 var product = await _PublicProductService.GetAllCategory(languageid, request);
@@ -40,33 +40,34 @@ namespace eShopSolutionBackendApi.Controllers
         [HttpGet("GetProductID")]
         public async Task<IActionResult> GetProductID(int productid, string LanguageId)
         {
-            try {
+            try
+            {
                 var product = await _ManageProductService.GetProductId(productid, LanguageId);
                 if (product == null)
                     return BadRequest("Cannot Find Product!");
                 return Ok(product);
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return BadRequest(ex);
             }
-            
         }
 
         [HttpPost("Create")]
         public async Task<IActionResult> Create([FromForm] ProductCreateRequest request)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 return BadRequest();
             }
             var productID = await _ManageProductService.Create(request);
             if (productID.Data == null)
-              return BadRequest("Create Fail");
+                return BadRequest("Create Fail");
             var product = await _ManageProductService.GetProductId((int)productID.Data, request.LanguageId);
             return CreatedAtAction(nameof(GetProductID), productID.Data, product);
             //return Ok(productID);
         }
+
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] ProductUpdateRequest request)
         {
@@ -83,9 +84,8 @@ namespace eShopSolutionBackendApi.Controllers
             if (ListImage?.Count > 0)
                 return Ok(ListImage);
             return BadRequest("Data can not found");
-
         }
-       
+
         [HttpDelete("Delete/{productid}")]
         public async Task<IActionResult> Delete(int productid)
         {
@@ -102,7 +102,6 @@ namespace eShopSolutionBackendApi.Controllers
             return BadRequest();
         }
 
-        
         [HttpPost("AddImage/{productid}")]
         public async Task<IActionResult> Addimage(int productid, [FromForm] ProductImageCreateRequest request)
         {
@@ -111,6 +110,7 @@ namespace eShopSolutionBackendApi.Controllers
                 return BadRequest("Add Fail");
             return Ok("Add successfully");
         }
+
         [HttpPut("UpdateImage/{imageid}")]
         public async Task<IActionResult> UpdateImage(int imageid, int productid, [FromForm] ProductImageUpdateRequest request)
         {
@@ -125,7 +125,6 @@ namespace eShopSolutionBackendApi.Controllers
         {
             var affectedResult = await _ManageProductService.RemoveImages(imageid);
             return Ok(affectedResult);
-
         }
 
         [HttpGet("search")]
@@ -142,8 +141,5 @@ namespace eShopSolutionBackendApi.Controllers
                 return BadRequest();
             }
         }
-
     }
-
 }
-

@@ -56,11 +56,11 @@ namespace eShopSolution.Application.System.Users
                 new Claim(ClaimTypes.Name,user.FirstName),
                 new Claim(ClaimTypes.Role, string.Join(";",roles))
             };
-                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Token:Key"]));
+                var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
-                var token = new JwtSecurityToken(_config["Token:Issuer"],
-                    _config["Token:Issuer"],
+                var token = new JwtSecurityToken(_config["Tokens:Issuer"],
+                    _config["Tokens:Key"],
                     claims,
                     expires: DateTime.Now.AddDays(7),
                     signingCredentials: creds);
