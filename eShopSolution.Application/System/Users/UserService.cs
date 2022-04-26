@@ -53,14 +53,15 @@ namespace eShopSolution.Application.System.Users
                 var claims = new[]
                 {
                 new Claim(ClaimTypes.Email,user.Email),
-                new Claim(ClaimTypes.Name,user.FirstName),
+                new Claim(ClaimTypes.Name,user.UserName),
+                new Claim(ClaimTypes.GivenName,user.FirstName),
                 new Claim(ClaimTypes.Role, string.Join(";",roles))
             };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
                 var token = new JwtSecurityToken(_config["Tokens:Issuer"],
-                    _config["Tokens:Key"],
+                    _config["Tokens:Issuer"],
                     claims,
                     expires: DateTime.Now.AddDays(7),
                     signingCredentials: creds);
@@ -73,80 +74,51 @@ namespace eShopSolution.Application.System.Users
             }
         }
 
-        public async Task<ResultModel> Register(RegisterRequest request)
+        public async Task<string> Register(RegisterRequest request)
         {
             try
             {
-                if (request.Password != request.ConfirmPassword)
-                {
-                    return new ResultModel
-                    {
-                        Message = "The confirm password field does not match password!",
-                        Result = false
-                    };
-                }
-                if (!IsvalidEmail(request.email))
-                {
-                    return new ResultModel
-                    {
-                        Message = "Please enter the correct email format!",
-                        Result = false
-                    };
-                }
                 var usermail = _context.AppUsers.Where(x => x.Email == request.email).ToList();
-                if (usermail.Count > 0)
-                {
-                    return new ResultModel
-                    {
-                        Message = "Email Exist!",
-                        Result = false
-                    };
-                }
+                if (usermail.Count > 0) throw new EShopException($"Email already exist");
+                var username = _context.AppUsers.Where(x => x.UserName == request.UserName).ToList();
+                if (username.Count > 0) throw new EShopException($"UserName already exist");
                 var user = new AppUser()
                 {
                     Email = request.email,
                     FirstName = request.FirstName,
                     LastName = request.LastName,
-                    Dob = request.Dob,
+                    Dob = (DateTime)request.Dob,
                     UserName = request.UserName,
                     LockoutEnabled = false,
                     CreatedAt = DateTime.Now
                 };
                 var result = await _userManager.CreateAsync(user, request.Password);
-                if (result.Succeeded)
-                {
-                    return new ResultModel
-                    {
-                        Message = "Register successfully!.",
-                        Result = true
-                    };
-                }
-                return new ResultModel
-                {
-                    Message = "Register is Unsuccessful!",
-                    Result = false,
-                    Data = result.Errors
-                };
+                if (result.Succeeded) throw new EShopException($"Register Successfully");
+
+                throw new EShopException($"Register Fail");
             }
             catch (Exception ex)
             {
-                return new ResultModel
-                {
-                    Result = false,
-                    Data = ex.Message
-                };
+                return ex.Message;
             }
         }
 
         private bool IsvalidEmail(string email)
         {
-            string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
-            var regex = new Regex(pattern, RegexOptions.IgnoreCase);
-            if (regex.IsMatch(email))
+            try
             {
-                return true;
+                string pattern = @"^(?!\.)(""([^""\r\\]|\\[""\r\\])*""|" + @"([-a-z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)" + @"@[a-z0-9][\w\.-]*[a-z0-9]\.[a-z][a-z\.]*[a-z]$";
+                var regex = new Regex(pattern, RegexOptions.IgnoreCase);
+                if (regex.IsMatch(email))
+                {
+                    return true;
+                }
+                return false;
             }
-            return false;
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
