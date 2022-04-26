@@ -8,10 +8,8 @@ namespace eShopSolution.ViewModels.System.Users
 {
     public class LoginRequest
     {
-        [Required]
         public string UserName { set; get; }
 
-        [Required]
         public string Password { get; set; }
 
         [DefaultValue(false)]

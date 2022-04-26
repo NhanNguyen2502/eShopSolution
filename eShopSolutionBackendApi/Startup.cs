@@ -4,6 +4,9 @@ using eShopSolution.Application.Common;
 using eShopSolution.Application.System.Users;
 using eShopSolution.Data.EF;
 using eShopSolution.Data.Entities;
+using eShopSolution.ViewModels.System.Users;
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -34,6 +37,7 @@ namespace eShopSolutionBackendApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Add connet string
             services.AddDbContext<EShopDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString(SystemConstains.MainConnectionString)));
 
             services.AddIdentity<AppUser, AppRole>()
@@ -48,17 +52,23 @@ namespace eShopSolutionBackendApi
             services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
             services.AddTransient<SignInManager<AppUser>, SignInManager<AppUser>>();
             services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
-            services.AddControllers();
+            //Add FluentValidation
+            services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
+            services.AddTransient<IValidator<RegisterRequest>, RegisterRequestValidator>();
+            //services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
+            services.AddControllers()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginRequestValidator>());
 
             //Add Swagger
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Swagger eShop Solution", Version = "v1" });
+                //add authori
                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {
                     //Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n
-                    //  Enter 'Bearer' [space] and then your token in the text input below.
-                    //  \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    //Enter 'Bearer' [space] and then your token in the text input below.
+                    //\r\n\r\nExample: 'Bearer 12345abcdef'",
                     Description = "Enter the Bearer Authorization string as following: `Bearer [space] Generated-JWT-Token`",
                     Name = "Authorization",
                     In = ParameterLocation.Header,
@@ -100,10 +110,10 @@ namespace eShopSolutionBackendApi
                         ValidateIssuer = true,
                         ValidIssuer = issuer,
                         ValidateAudience = true,
-                        ValidAudience = signingKey,
+                        ValidAudience = issuer,
                         ValidateLifetime = true,
-                        ClockSkew = System.TimeSpan.Zero,
                         ValidateIssuerSigningKey = true,
+                        ClockSkew = System.TimeSpan.Zero,                        
                         IssuerSigningKey = new SymmetricSecurityKey(signingKeyBytes)
                     };
                 });

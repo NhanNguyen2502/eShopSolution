@@ -11,6 +11,6 @@ namespace eShopSolution.Application.System.Users
     {
         public Task<string> Authencate(LoginRequest request);
 
-        public Task<ResultModel> Register(RegisterRequest request);
+        public Task<string> Register(RegisterRequest request);
     }
 }
