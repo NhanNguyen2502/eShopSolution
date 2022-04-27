@@ -28,6 +28,7 @@ namespace eshopSolution.AdminAPP.Service
             var reponse = await client.PostAsync("/api/users/authenticate", httpcontent);
             var token = await reponse.Content.ReadAsStringAsync();
             return token;
+            //http:nhan12588-001-site1.ctempurl.com
         }
 
         public async Task<string> Register(RegisterRequest request)
