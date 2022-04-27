@@ -24,10 +24,11 @@ namespace eshopSolution.AdminAPP.Service
             var json = JsonConvert.SerializeObject(request);
             var httpcontent = new StringContent(json, Encoding.UTF8, "application/json");
             var client = _ihttpClientfactory.CreateClient();
-            client.BaseAddress = new Uri("https://localhost:5001");
+            client.BaseAddress = new Uri("http://nhan12588-001-site1.ctempurl.com");
             var reponse = await client.PostAsync("/api/users/authenticate", httpcontent);
             var token = await reponse.Content.ReadAsStringAsync();
             return token;
+            //http:nhan12588-001-site1.ctempurl.com
         }
 
         public async Task<string> Register(RegisterRequest request)
