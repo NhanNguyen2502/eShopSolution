@@ -2,6 +2,7 @@
 using eShopSolution.Data.Entities;
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -19,6 +20,7 @@ namespace eShopSolutionBackendApi.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class usersController : Controller
     {
         private readonly IUserService _userservice;
@@ -56,6 +58,15 @@ namespace eShopSolutionBackendApi.Controllers
             }
             var resultRegister = await _userservice.Register(request);
             return Ok(resultRegister);
+        }
+
+        [HttpGet("listuser")]
+        public async Task<IActionResult> listuser([FromQuery] GetUserPagingRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var ListUser = await _userservice.GetUserPaging(request);
+            return Ok(ListUser);
         }
     }
 }

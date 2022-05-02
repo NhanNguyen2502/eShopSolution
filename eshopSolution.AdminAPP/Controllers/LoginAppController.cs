@@ -2,6 +2,7 @@
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Logging;
@@ -16,26 +17,20 @@ using System.Threading.Tasks;
 
 namespace eshopSolution.AdminAPP.Controllers
 {
-    public class UserController : Controller
+    public class LoginAppController : Controller
     {
-        private readonly IUserApiClient _userApiClient;
+        private readonly IUserApiClient _iuserApiClient;
         private readonly IConfiguration _configuration;
 
-        public UserController(IUserApiClient userApiClient, IConfiguration configuration)
+        public LoginAppController(IUserApiClient iuserApiClient, IConfiguration configuration)
         {
-            _userApiClient = userApiClient;
+            _iuserApiClient = iuserApiClient;
             _configuration = configuration;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
-        public async Task<IActionResult> Login()
+        public IActionResult Login()
         {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return View();
         }
 
@@ -44,13 +39,14 @@ namespace eshopSolution.AdminAPP.Controllers
         {
             if (!ModelState.IsValid)
                 return View(ModelState);
-            var token = await _userApiClient.Authenticate(request);
+            var token = await _iuserApiClient.Authenticate(request);
             var userprincical = this.ValidateToken(token);
             var authproperties = new AuthenticationProperties
             {
                 ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
                 IsPersistent = true
             };
+            HttpContext.Session.SetString("Token", token);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userprincical, authproperties);
             return RedirectToAction("Index", "Home");
         }
@@ -67,30 +63,6 @@ namespace eshopSolution.AdminAPP.Controllers
             validationParameters.IssuerSigningKey = new SymmetricSecurityKey(signingKeyBytes);
             ClaimsPrincipal principal = new JwtSecurityTokenHandler().ValidateToken(JwtToken, validationParameters, out Issuer);
             return principal;
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> Logout()
-        {
-            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-            return RedirectToAction("Login", "user");
-        }
-
-        [HttpGet]
-        public IActionResult Register()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Register(RegisterRequest request)
-        {
-            if (!ModelState.IsValid)
-            {
-                return View(ModelState);
-            }
-            var result = _userApiClient.Register(request);
-            return View(result);
         }
     }
 }

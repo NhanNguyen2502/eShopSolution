@@ -18,11 +18,12 @@ using System.Threading.Tasks;
 
 namespace eShopSolution.Application.Catalog.Products
 {
-    public class ManageProductService : IManageProductService
+    public class ProductService : IProductService
     {
         private readonly EShopDbContext _Context;
         private readonly IStorageService _storageService;
-        public ManageProductService(EShopDbContext Context, IStorageService storageService)
+
+        public ProductService(EShopDbContext Context, IStorageService storageService)
         {
             _Context = Context;
             _storageService = storageService;
@@ -49,8 +50,6 @@ namespace eShopSolution.Application.Catalog.Products
             _Context.ProductImages.Add(productImage);
             await _Context.SaveChangesAsync();
             return productImage.Id; throw new EShopException("Add successfully!");
-
-
         }
 
         public async Task<bool> AddViewCount(int ProductId)
@@ -85,7 +84,6 @@ namespace eShopSolution.Application.Catalog.Products
                         LanguageId = request.LanguageId
                     }
                 }
-
                 };
                 product.ProductInCategories = new List<ProductInCategory>
             {
@@ -161,13 +159,11 @@ namespace eShopSolution.Application.Catalog.Products
                     Message = ex.Message,
                 };
             }
-
         }
-
 
         public async Task<PagedResult<ProductViewModel>> GetAllPaging(GetManageProductPagingRequest request)
         {
-            // Step1: Select Join 
+            // Step1: Select Join
             var query = from p in _Context.Products
                         join pt in _Context.ProductTranslations on p.ID equals pt.ProductId
                         join pic in _Context.ProductInCategories on p.ID equals pic.ProductId
@@ -200,7 +196,6 @@ namespace eShopSolution.Application.Catalog.Products
                     SeoTitle = x.pt.SeoTitle,
                     Stock = x.p.Stock,
                     ViewCount = x.p.ViewCount,
-
                 }).ToListAsync();
             //Step4: Select and Projection
             var pageResult = new PagedResult<ProductViewModel>()
@@ -210,6 +205,7 @@ namespace eShopSolution.Application.Catalog.Products
             };
             return pageResult;
         }
+
         public async Task<List<ProductImageViewModel>> GetListImage(int productId)
         {
             return await _Context.ProductImages.Where(x => x.ProductId == productId)
@@ -269,7 +265,6 @@ namespace eShopSolution.Application.Catalog.Products
                     Message = ex.Message
                 };
             }
-
         }
 
         public async Task<ResultModel> RemoveImages(int imageId)
@@ -302,15 +297,14 @@ namespace eShopSolution.Application.Catalog.Products
                     Result = false
                 };
             }
-
         }
 
         public async Task<ResultModel> Search(string term)
         {
             try
-            {                
+            {
                 var names = await _Context.ProductTranslations.Where(p => p.Name.Contains(term)).Select(p => p.Name).ToArrayAsync();
-                if(names.Count() > 0)
+                if (names.Count() > 0)
                 {
                     return new ResultModel()
                     {
@@ -319,15 +313,14 @@ namespace eShopSolution.Application.Catalog.Products
                         Message = "aaa"
                     };
                 }
-                
+
                 return new ResultModel()
                 {
-
                     Result = false,
                     Message = "data does not exist!"
                 };
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return new ResultModel()
                 {
@@ -356,13 +349,10 @@ namespace eShopSolution.Application.Catalog.Products
                 var thumbnailImage = await _Context.ProductImages.FirstOrDefaultAsync(i => i.IsDefault == true && i.ProductId == request.Id);
                 if (thumbnailImage != null)
                 {
-
                     thumbnailImage.FileSize = request.ThumbnailImage.Length;
                     thumbnailImage.ImagePath = await this.SaveFile(request.ThumbnailImage);
                     _Context.ProductImages.Update(thumbnailImage);
-
                 }
-
             }
             return await _Context.SaveChangesAsync();
         }
@@ -381,7 +371,6 @@ namespace eShopSolution.Application.Catalog.Products
             {
                 productImage.ImagePath = await this.SaveFile(request.ImageFile);
                 productImage.FileSize = request.ImageFile.Length;
-
             }
             _Context.ProductImages.Update(productImage);
             return await _Context.SaveChangesAsync();
@@ -409,6 +398,74 @@ namespace eShopSolution.Application.Catalog.Products
             var fileName = $"{Guid.NewGuid()}{Path.GetExtension(originalFileName)}";
             await _storageService.SaveFileAsync(file.OpenReadStream(), fileName);
             return fileName;
+        }
+
+        public async Task<ResultModel> GetAllCategory(string languageid, GetPublicProductPagingRequest request)
+        {
+            // Step1: Select Join
+            try
+            {
+                var query = from p in _Context.Products
+                            join pt in _Context.ProductTranslations on p.ID equals pt.ProductId
+                            join pic in _Context.ProductInCategories on p.ID equals pic.ProductId
+                            join c in _Context.Categories on pic.CategoryId equals c.ID
+                            where pt.LanguageId == languageid
+                            select new { p, pt, pic };
+                //Step2: Filter
+                if (request.CategoryId.HasValue && request.CategoryId.Value > 0)
+                {
+                    query = query.Where(p => p.pic.CategoryId == request.CategoryId);
+                }
+                //Step3: Paging
+                int TotalRow = await query.CountAsync();
+                if (TotalRow != 0)
+                {
+                    var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Select(x => new ProductViewModel()
+                    {
+                        ID = x.p.ID,
+                        Name = x.pt.Name,
+                        DateCreated = x.p.DateCreated,
+                        Description = x.pt.Description,
+                        Details = x.pt.Details,
+                        OriginalPrice = x.p.OriginalPrice,
+                        Price = x.p.Price,
+                        SeoAlias = x.pt.SeoAlias,
+                        SeoDescription = x.pt.SeoDescription,
+                        SeoTitle = x.pt.SeoTitle,
+                        Stock = x.p.Stock,
+                        ViewCount = x.p.ViewCount,
+                    }).ToListAsync();
+                    //Step4: Select and Projection
+                    var pageResult = new PagedResult<ProductViewModel>()
+                    {
+                        TotalRecord = TotalRow,
+                        Items = data,
+                        PagNumber = (int)Math.Ceiling(TotalRow / (double)request.PageSize), //(TotalRow - request.PageSize) + 1,
+                        currentpage = request.PageIndex,
+                    };
+                    return new ResultModel
+                    {
+                        Result = true,
+                        Message = "Get list product successfully!",
+                        Data = pageResult
+                    };
+                }
+                return new ResultModel()
+                {
+                    Result = false,
+                    Message = "Can't found data!",
+                };
+            }
+            catch (Exception ex)
+            {
+                return new ResultModel
+                {
+                    Result = false,
+                    Message = ex.Message
+                };
+            }
         }
     }
 }

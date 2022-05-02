@@ -26,7 +26,7 @@
                             <div class="card shadow-lg border-0 rounded-lg mt-5">
                                 <div class="card-header"><h3 class="text-center font-weight-light my-4">Create Account</h3></div>
                                 <div class="card-body">
-                                    <form method="post">
+                                    <form asp-controller="registerapp" asp-action="register" method="post">
                                         <div class="row mb-3">
                                             <div class="col-md-6">
                                                 <div class="form-floating mb-3 mb-md-0">
@@ -42,7 +42,7 @@
                                             </div>
                                         </div>
                                         <div class="form-floating mb-3">
-                                            <input class="form-control" asp-for="Dob" type="text" placeholder="name@example.com" />
+                                            <input class="form-control" asp-for="Dob" type="datetime-local" placeholder="Day Of birthday" />
                                             <label>DoB</label>
                                         </div>
 
@@ -74,7 +74,7 @@
                                     </form>
                                 </div>
                                 <div class="card-footer text-center py-3">
-                                    <div class="small"><a href="login.html">Have an account? Go to login</a></div>
+                                    <div class="small"><a asp-controller="LoginApp" asp-action="Login">Have an account? Go to login</a></div>
                                 </div>
                             </div>
                         </div>
