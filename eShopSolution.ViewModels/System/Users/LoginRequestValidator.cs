@@ -13,10 +13,10 @@ namespace eShopSolution.ViewModels.System.Users
             this.CascadeMode = CascadeMode.Stop;
             RuleFor(x => x.UserName)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty();
+                .NotEmpty().WithMessage("UserName is required");
             RuleFor(x => x.Password)
                 .Cascade(CascadeMode.Stop)
-                .NotEmpty();
+                .NotEmpty().WithMessage("Password is required");
         }
     }
 }

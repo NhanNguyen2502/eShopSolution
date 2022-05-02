@@ -28,10 +28,18 @@ namespace eshopSolution.AdminAPP
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            //Add session
+            services.AddDistributedMemoryCache();
+            services.AddSession(option =>
+            {
+                option.IdleTimeout = TimeSpan.FromMinutes(5); //FromSeconds(30);
+                option.Cookie.HttpOnly = true;
+                option.Cookie.IsEssential = true;
+            });
             //Add Authetication
             services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(option =>
             {
-                option.LoginPath = "/user/Login";
+                option.LoginPath = "/LoginApp/Login";
                 //option.AccessDeniedPath = "Shared/Error";
             });
             //Add HttpClient
@@ -68,7 +76,7 @@ namespace eshopSolution.AdminAPP
             app.UseRouting();
 
             app.UseAuthorization();
-
+            app.UseSession();
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

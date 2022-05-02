@@ -45,8 +45,7 @@ namespace eShopSolutionBackendApi
                 .AddDefaultTokenProviders();
 
             //Declare DI
-            services.AddTransient<IPublicProductService, PublicProductService>();
-            services.AddTransient<IManageProductService, ManageProductService>();
+            services.AddTransient<IProductService, ProductService>();
             services.AddTransient<IStorageService, FileStorageService>();
             services.AddTransient<IUserService, UserService>();
             services.AddTransient<UserManager<AppUser>, UserManager<AppUser>>();
@@ -113,7 +112,7 @@ namespace eShopSolutionBackendApi
                         ValidAudience = issuer,
                         ValidateLifetime = true,
                         ValidateIssuerSigningKey = true,
-                        ClockSkew = System.TimeSpan.Zero,                        
+                        ClockSkew = System.TimeSpan.Zero,
                         IssuerSigningKey = new SymmetricSecurityKey(signingKeyBytes)
                     };
                 });

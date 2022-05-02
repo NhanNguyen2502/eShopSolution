@@ -5,10 +5,11 @@ using System.Text;
 
 namespace eShopSolution.ViewModels.Common
 {
-    public class PagingRequestBase
+    public class PagingRequestBase : RequestPage
     {
-        [Range(1,Int32.MaxValue)]
+        [Range(1, Int32.MaxValue)]
         public int PageIndex { get; set; } = 1;
-        public int PageSize { get; set; } 
+
+        public int PageSize { get; set; }
     }
 }

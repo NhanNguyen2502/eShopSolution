@@ -2,8 +2,11 @@
 using eShopSolution.Data.EF;
 using eShopSolution.Data.Entities;
 using eShopSolution.ViewModels.Catalog.Result;
+using eShopSolution.ViewModels.Common;
+using eShopSolution.ViewModels.Result;
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
@@ -74,14 +77,24 @@ namespace eShopSolution.Application.System.Users
             }
         }
 
-        public async Task<string> Register(RegisterRequest request)
+        public async Task<ResultMessageModel> Register(RegisterRequest request)
         {
             try
             {
                 var usermail = _context.AppUsers.Where(x => x.Email == request.email).ToList();
-                if (usermail.Count > 0) throw new EShopException($"Email already exist");
+                if (usermail.Count > 0) //throw new EShopException($"Email already exist");
+                    return new ResultMessageModel()
+                    {
+                        Message = "Email already exist",
+                        MessageCode = false
+                    };
                 var username = _context.AppUsers.Where(x => x.UserName == request.UserName).ToList();
-                if (username.Count > 0) throw new EShopException($"UserName already exist");
+                if (username.Count > 0) //throw new EShopException($"UserName already exist");
+                    return new ResultMessageModel()
+                    {
+                        Message = "UserName already exist",
+                        MessageCode = false
+                    };
                 var user = new AppUser()
                 {
                     Email = request.email,
@@ -93,13 +106,25 @@ namespace eShopSolution.Application.System.Users
                     CreatedAt = DateTime.Now
                 };
                 var result = await _userManager.CreateAsync(user, request.Password);
-                if (result.Succeeded) throw new EShopException($"Register Successfully");
-
-                throw new EShopException($"Register Fail");
+                if (result.Succeeded) //throw new EShopException($"Register Successfully");
+                    return new ResultMessageModel()
+                    {
+                        Message = "Register Successfully",
+                        MessageCode = true
+                    };
+                return new ResultMessageModel()
+                {
+                    Message = "Register Fail",
+                    MessageCode = false
+                };
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return new ResultMessageModel()
+                {
+                    Message = ex.Message,
+                    MessageCode = false
+                };
             }
         }
 
@@ -118,6 +143,47 @@ namespace eShopSolution.Application.System.Users
             catch (Exception)
             {
                 return false;
+            }
+        }
+
+        public async Task<PagedResult<UserVM>> GetUserPaging(GetUserPagingRequest request)
+        {
+            try
+            {
+                var query = _userManager.Users;
+                //Filter
+                if (!string.IsNullOrEmpty(request.Keyword))
+                {
+                    query = query.Where(x => x.UserName.Contains(request.Keyword)
+                    || x.Email.Contains(request.Keyword));
+                }
+                //Step3: Paging
+                int Totalrow = await query.CountAsync();
+
+                var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize)
+                    .Select(x => new UserVM()
+                    {
+                        id = x.Id,
+                        UserName = x.UserName,
+                        Dob = x.Dob,
+                        Email = x.Email,
+                        CreatedAt = x.CreatedAt
+                    }).ToListAsync();
+                var Datasort = data.OrderByDescending(i => i.CreatedAt).ToList();
+                //Step4: Select and Projection
+                var Pageresult = new PagedResult<UserVM>
+                {
+                    TotalRecord = Totalrow,
+                    Items = Datasort,
+                    PagNumber = (int)Math.Ceiling(Totalrow / (double)request.PageSize),
+                    currentpage = request.PageIndex,
+                };
+                return Pageresult;
+            }
+            catch (Exception ex)
+            {
+                throw new EShopException(ex.Message);
             }
         }
     }
