@@ -40,6 +40,11 @@ namespace eshopSolution.AdminAPP.Controllers
             if (!ModelState.IsValid)
                 return View(ModelState);
             var token = await _iuserApiClient.Authenticate(request);
+            if (!token.IsSuccessed)
+            {
+                ModelState.AddModelError("", token.Message);
+                return View();
+            }
             var userprincical = this.ValidateToken((string)token.ResultObj);
             var authproperties = new AuthenticationProperties
             {

@@ -50,9 +50,9 @@ namespace eshopSolution.AdminAPP.Service
             var client = _ihttpClientfactory.CreateClient();
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", session);
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
-            var response = await client.DeleteAsync($"/api/users/delete/{id}");
+            var response = await client.DeleteAsync($"/api/users/{id}");
             var body = await response.Content.ReadAsStringAsync();
-            if (response.IsSuccessStatusCode)
+            if (response.IsSuccessStatusCode == true)
                 return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
             return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
         }
@@ -116,7 +116,7 @@ namespace eshopSolution.AdminAPP.Service
                 client.BaseAddress = new Uri(_configuration["BaseAddress"]);
                 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", session);
                 var reponse = await client.GetAsync($"/api/users/{id}");
-                if (reponse.IsSuccessStatusCode)
+                if (reponse.IsSuccessStatusCode == true)
                     return JsonConvert.DeserializeObject<ApiSuccessResult<UserVM>>(await reponse.Content.ReadAsStringAsync());
                 return JsonConvert.DeserializeObject<ApiErrorResult<UserVM>>(await reponse.Content.ReadAsStringAsync());
             }
