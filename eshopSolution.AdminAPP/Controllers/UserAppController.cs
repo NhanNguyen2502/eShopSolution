@@ -56,12 +56,12 @@ namespace eshopSolution.AdminAPP.Controllers
                 var user = result.ResultObj;
                 var updaterequest = new UserUpdateRequest()
                 {
+                    id = user.id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Dob = user.Dob,
                     Email = user.Email,
-                    PhoneNumber = user.PhoneNumber,
-                    id = user.id
+                    PhoneNumber = user.PhoneNumber
                 };
                 return View(updaterequest);
             }
@@ -95,6 +95,13 @@ namespace eshopSolution.AdminAPP.Controllers
                 return RedirectToAction("Index");
             ModelState.AddModelError("", result.Message);
             return View();
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Detail(Guid id)
+        {
+            var result = await _iuserApiClient.UserbyId(id);
+            return View(result.ResultObj);
         }
     }
 }
