@@ -50,7 +50,7 @@ namespace eShopSolution.Application.System.Users
                     user.AccessFailedCount += 1;
                     //user.LockoutEnabled = false;
                     await _context.SaveChangesAsync();
-                    return new ApiErrorResult<string>("Đăng nhập không đúng");
+                    return new ApiErrorResult<string>("Wrong username or password");
                 }
                 var roles = await _userManager.GetRolesAsync(user);
                 var claims = new[]
@@ -226,7 +226,6 @@ namespace eShopSolution.Application.System.Users
             try
             {
                 var user = await _userManager.FindByIdAsync(id.ToString());
-
                 if (user == null)
                     return new ApiErrorResult<bool>("User does not exist!");
                 var result = await _userManager.DeleteAsync(user);
