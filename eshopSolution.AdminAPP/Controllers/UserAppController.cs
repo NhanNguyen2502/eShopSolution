@@ -31,13 +31,12 @@ namespace eshopSolution.AdminAPP.Controllers
             var session = HttpContext.Session.GetString("Token");
             var request = new GetUserPagingRequest()
             {
-                BearerToken = session,
                 Keyword = keyword,
                 PageIndex = pageindex,
                 PageSize = pagsize
             };
             var data = await _iuserApiClient.Listuser(request);
-            return View(data);
+            return View(data.ResultObj);
         }
 
         [HttpPost]
@@ -46,6 +45,47 @@ namespace eshopSolution.AdminAPP.Controllers
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Remove("Token");
             return RedirectToAction("Login", "LoginApp");
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(Guid id)
+        {
+            var result = await _iuserApiClient.UserbyId(id);
+            if (result.IsSuccessed)
+            {
+                var user = result.ResultObj;
+                var updaterequest = new UserUpdateRequest()
+                {
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Dob = user.Dob,
+                    Email = user.Email,
+                    PhoneNumber = user.PhoneNumber,
+                    id = user.id
+                };
+                return View(updaterequest);
+            }
+            return RedirectToAction("Error", "Home");
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Edit(UserUpdateRequest request)
+        {
+            var result = await _iuserApiClient.UpdateUser(request.id, request);
+            if (result.IsSuccessed)
+                return RedirectToAction("Index");
+            ModelState.AddModelError("", result.Message);
+            return View(request);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _iuserApiClient.DeleteUser(id);
+            if (result.IsSuccessed)
+                return RedirectToAction("Index", "UserApp");
+            ModelState.AddModelError("", result.Message);
+            return View();
         }
     }
 }

@@ -11,10 +11,16 @@ namespace eShopSolution.Application.System.Users
 {
     public interface IUserService
     {
-        public Task<string> Authencate(LoginRequest request);
+        public Task<APIResultMessage<string>> Authencate(LoginRequest request);
 
-        public Task<ResultMessageModel> Register(RegisterRequest request);
+        public Task<APIResultMessage<bool>> Register(RegisterRequest request);
 
-        Task<PagedResult<UserVM>> GetUserPaging(GetUserPagingRequest request);
+        public Task<APIResultMessage<PagedResult<UserVM>>> GetUserPaging(GetUserPagingRequest request);
+
+        public Task<APIResultMessage<bool>> UpdateUser(Guid id, UserUpdateRequest request);
+
+        public Task<APIResultMessage<UserVM>> GetUserId(Guid id);
+
+        public Task<APIResultMessage<bool>> DeleteUser(Guid id);
     }
 }

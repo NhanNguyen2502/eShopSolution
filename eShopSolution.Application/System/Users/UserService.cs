@@ -38,19 +38,19 @@ namespace eShopSolution.Application.System.Users
             _context = context;
         }
 
-        public async Task<string> Authencate(LoginRequest request)
+        public async Task<APIResultMessage<string>> Authencate(LoginRequest request)
         {
             try
             {
                 var user = await _userManager.FindByNameAsync(request.UserName);
-                if (user == null) return null;
+                if (user == null) return new ApiErrorResult<string>("Đăng nhập không đúng");
                 var result = await _signInManager.PasswordSignInAsync(user, request.Password, request.RememberMe, true);
                 if (!result.Succeeded)
                 {
                     user.AccessFailedCount += 1;
                     //user.LockoutEnabled = false;
                     await _context.SaveChangesAsync();
-                    return null;
+                    return new ApiErrorResult<string>("Đăng nhập không đúng");
                 }
                 var roles = await _userManager.GetRolesAsync(user);
                 var claims = new[]
@@ -69,32 +69,25 @@ namespace eShopSolution.Application.System.Users
                     expires: DateTime.Now.AddDays(7),
                     signingCredentials: creds);
 
-                return new JwtSecurityTokenHandler().WriteToken(token);
+                return new ApiSuccessResult<string>(new JwtSecurityTokenHandler().WriteToken(token));
             }
             catch (Exception ex)
             {
-                return ex.Message;
+                return new ApiErrorResult<string>(ex.Message);
             }
         }
 
-        public async Task<ResultMessageModel> Register(RegisterRequest request)
+        public async Task<APIResultMessage<bool>> Register(RegisterRequest request)
         {
             try
             {
-                var usermail = _context.AppUsers.Where(x => x.Email == request.email).ToList();
-                if (usermail.Count > 0) //throw new EShopException($"Email already exist");
-                    return new ResultMessageModel()
-                    {
-                        Message = "Email already exist",
-                        MessageCode = false
-                    };
-                var username = _context.AppUsers.Where(x => x.UserName == request.UserName).ToList();
-                if (username.Count > 0) //throw new EShopException($"UserName already exist");
-                    return new ResultMessageModel()
-                    {
-                        Message = "UserName already exist",
-                        MessageCode = false
-                    };
+                var usermail = await _userManager.FindByEmailAsync(request.email);
+                if (usermail != null)
+                    return new ApiErrorResult<bool>("Email already exist");
+
+                var username = await _userManager.FindByNameAsync(request.UserName);
+                if (username != null)
+                    return new ApiErrorResult<bool>("UserName already exist");
                 var user = new AppUser()
                 {
                     Email = request.email,
@@ -107,24 +100,13 @@ namespace eShopSolution.Application.System.Users
                 };
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded) //throw new EShopException($"Register Successfully");
-                    return new ResultMessageModel()
-                    {
-                        Message = "Register Successfully",
-                        MessageCode = true
-                    };
-                return new ResultMessageModel()
-                {
-                    Message = "Register Fail",
-                    MessageCode = false
-                };
+                    return new ApiSuccessResult<bool>();
+
+                return new ApiErrorResult<bool>("Register Fail");
             }
             catch (Exception ex)
             {
-                return new ResultMessageModel()
-                {
-                    Message = ex.Message,
-                    MessageCode = false
-                };
+                return new ApiErrorResult<bool>(ex.Message);
             }
         }
 
@@ -146,7 +128,7 @@ namespace eShopSolution.Application.System.Users
             }
         }
 
-        public async Task<PagedResult<UserVM>> GetUserPaging(GetUserPagingRequest request)
+        public async Task<APIResultMessage<PagedResult<UserVM>>> GetUserPaging(GetUserPagingRequest request)
         {
             try
             {
@@ -179,11 +161,82 @@ namespace eShopSolution.Application.System.Users
                     PagNumber = (int)Math.Ceiling(Totalrow / (double)request.PageSize),
                     currentpage = request.PageIndex,
                 };
-                return Pageresult;
+                return new ApiSuccessResult<PagedResult<UserVM>>(Pageresult);
             }
             catch (Exception ex)
             {
                 throw new EShopException(ex.Message);
+            }
+        }
+
+        public async Task<APIResultMessage<bool>> UpdateUser(Guid id, UserUpdateRequest request)
+        {
+            try
+            {
+                if (await _userManager.Users.AnyAsync(x => x.Email == request.Email && x.Id != id))
+                {
+                    return new ApiErrorResult<bool>("Email already exists!");
+                }
+                var user = await _userManager.FindByIdAsync(id.ToString());
+
+                user.FirstName = request.FirstName;
+                user.LastName = request.LastName;
+                user.Dob = (DateTime)request.Dob;
+                user.Email = request.Email;
+                user.PhoneNumber = request.PhoneNumber;
+                var result = await _userManager.UpdateAsync(user);
+                if (result.Succeeded)
+                    return new ApiSuccessResult<bool>();
+                return new ApiErrorResult<bool>("Update Fail");
+            }
+            catch (Exception ex)
+            {
+                return new ApiErrorResult<bool>(ex.Message);
+            }
+        }
+
+        public async Task<APIResultMessage<UserVM>> GetUserId(Guid id)
+        {
+            try
+            {
+                var query = await _userManager.FindByIdAsync(id.ToString());
+                if (query == null)
+                {
+                    return new ApiErrorResult<UserVM>("User dose not exist!");
+                }
+                var userVM = new UserVM()
+                {
+                    id = query.Id,
+                    FirstName = query.FirstName,
+                    LastName = query.LastName,
+                    Email = query.Email,
+                    Dob = query.Dob,
+                    PhoneNumber = query.PhoneNumber,
+                };
+                return new ApiSuccessResult<UserVM>(userVM);
+            }
+            catch (Exception ex)
+            {
+                return new ApiErrorResult<UserVM>(ex.Message);
+            }
+        }
+
+        public async Task<APIResultMessage<bool>> DeleteUser(Guid id)
+        {
+            try
+            {
+                var user = await _userManager.FindByIdAsync(id.ToString());
+
+                if (user == null)
+                    return new ApiErrorResult<bool>("User does not exist!");
+                var result = await _userManager.DeleteAsync(user);
+                if (result.Succeeded)
+                    return new ApiSuccessResult<bool>();
+                return new ApiErrorResult<bool>("Delete failed");
+            }
+            catch (Exception ex)
+            {
+                return new ApiErrorResult<bool>(ex.Message);
             }
         }
     }

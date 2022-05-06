@@ -36,8 +36,9 @@ namespace eShopSolution.ViewModels.System.Users
                 .WithMessage("User Name is Required.");
             RuleFor(x => x.Password)
                 .Cascade(CascadeMode.Stop)
-                .Matches("(?=.*[A-Z])(?=.*[@$!%*#?&]){6,}")
-                .WithMessage("Password can not less 6 characters.,There is at least a uppercase,There is at least a special character");
+                .Matches("(?=.*[A-Z])(?=.*[0-9])(?=.*[@$!%*#?&]){6,}")
+                .WithMessage
+                ("Password can not less 6 characters.,There is at least a uppercase,There is at least a special character, There is at least a number");
             RuleFor(x => x.ConfirmPassword)
                 .Cascade(CascadeMode.Stop)
                 .NotEmpty()

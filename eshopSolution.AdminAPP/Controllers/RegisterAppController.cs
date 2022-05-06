@@ -17,11 +17,6 @@ namespace eshopSolution.AdminAPP.Controllers
             _iuserApiClient = iuserApiClient;
         }
 
-        public IActionResult Index()
-        {
-            return View();
-        }
-
         [HttpGet]
         public IActionResult Register()
         {
@@ -36,8 +31,8 @@ namespace eshopSolution.AdminAPP.Controllers
                 if (!ModelState.IsValid)
                     return BadRequest(ModelState);
                 var result = await _iuserApiClient.register(request);
-                if (result.MessageCode == true)
-                    return View(result.MessageCode);
+                if (result.IsSuccessed == true)
+                    return View(result.IsSuccessed);
                 return View(result.Message);
             }
             catch (Exception ex)

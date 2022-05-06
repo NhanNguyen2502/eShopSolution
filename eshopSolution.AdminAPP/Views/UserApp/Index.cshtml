@@ -19,9 +19,7 @@
             <table class="table table-bordered">
                 <thead>
                     <tr>
-                        <th>
-                            ID
-                        </th>
+
                         <th>
                             UserName
                         </th>
@@ -42,9 +40,6 @@
                     {
                         <tr>
                             <td>
-                                @Html.DisplayFor(modelItem => item.id)
-                            </td>
-                            <td>
                                 @Html.DisplayFor(modelItem => item.UserName)
                             </td>
                             <td>
@@ -57,9 +52,9 @@
                                 @Html.DisplayFor(modelItem => item.CreatedAt)
                             </td>
                             <td>
-                                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
+                                @Html.ActionLink("Edit", "Edit", new { id = item.id }) |
+                                @Html.ActionLink("Details", "Details", new { id = item.id }) |
+                                @Html.ActionLink("Delete", "Delete", new { id = item.id })
                             </td>
                         </tr>
                     }

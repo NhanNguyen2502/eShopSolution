@@ -2,6 +2,7 @@
 using eShopSolution.ViewModels.Catalog.ProductImages;
 using eShopSolution.ViewModels.Catalog.Result;
 using eShopSolution.ViewModels.Common;
+using eShopSolution.ViewModels.Result;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
 using System.Threading.Tasks;

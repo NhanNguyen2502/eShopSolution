@@ -40,14 +40,17 @@ namespace eshopSolution.AdminAPP.Controllers
             if (!ModelState.IsValid)
                 return View(ModelState);
             var token = await _iuserApiClient.Authenticate(request);
-            var userprincical = this.ValidateToken(token);
+            var userprincical = this.ValidateToken((string)token.ResultObj);
             var authproperties = new AuthenticationProperties
             {
                 ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
                 IsPersistent = true
             };
-            HttpContext.Session.SetString("Token", token);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, userprincical, authproperties);
+            HttpContext.Session.SetString("Token", token.ResultObj);
+            await HttpContext.SignInAsync(
+                CookieAuthenticationDefaults.AuthenticationScheme,
+                userprincical,
+                authproperties);
             return RedirectToAction("Index", "Home");
         }
 
