@@ -212,6 +212,7 @@ namespace eShopSolution.Application.System.Users
                     Email = query.Email,
                     Dob = query.Dob,
                     PhoneNumber = query.PhoneNumber,
+                    CreatedAt = query.CreatedAt
                 };
                 return new ApiSuccessResult<UserVM>(userVM);
             }
