@@ -23,12 +23,12 @@ namespace eShopSolutionBackendApi.Controllers
     [Authorize]
     public class usersController : Controller
     {
-        private readonly IUserService _userservice;
+        private readonly IUserService _iuserservice;
         private readonly IConfiguration _configuration;
 
-        public usersController(IUserService userService, SignInManager<AppUser> signInManager, IConfiguration configuration)
+        public usersController(IUserService iuserService, SignInManager<AppUser> signInManager, IConfiguration configuration)
         {
-            _userservice = userService;
+            _iuserservice = iuserService;
             _configuration = configuration;
         }
 
@@ -40,10 +40,10 @@ namespace eShopSolutionBackendApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var resultToken = await _userservice.Authencate(request);
-            if (string.IsNullOrEmpty(resultToken))
+            var resultToken = await _iuserservice.Authencate(request);
+            if (string.IsNullOrEmpty(resultToken.ResultObj))
             {
-                return BadRequest("UserName or Password is incorrect.");
+                return BadRequest(resultToken);
             }
             return Ok(resultToken);
         }
@@ -56,7 +56,7 @@ namespace eShopSolutionBackendApi.Controllers
             {
                 return BadRequest(ModelState);
             }
-            var resultRegister = await _userservice.Register(request);
+            var resultRegister = await _iuserservice.Register(request);
             return Ok(resultRegister);
         }
 
@@ -65,8 +65,33 @@ namespace eShopSolutionBackendApi.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
-            var ListUser = await _userservice.GetUserPaging(request);
+            var ListUser = await _iuserservice.GetUserPaging(request);
             return Ok(ListUser);
+        }
+
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateUser(Guid id, [FromBody] UserUpdateRequest request)
+        {
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            var ResultUpdate = await _iuserservice.UpdateUser(id, request);
+            return Ok(ResultUpdate);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> Userbyid(Guid id)
+        {
+            var result = await _iuserservice.GetUserId(id);
+            return Ok(result);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteUser(Guid id)
+        {
+            var result = await _iuserservice.DeleteUser(id);
+            return Ok(result);
         }
     }
 }

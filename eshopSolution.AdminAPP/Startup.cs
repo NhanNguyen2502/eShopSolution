@@ -1,10 +1,12 @@
 using eshopSolution.AdminAPP.Service;
+using eShopSolution.ViewModels.Result;
 using eShopSolution.ViewModels.System.Users;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -47,10 +49,12 @@ namespace eshopSolution.AdminAPP
             //ADD DIFluentValitor
             services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddTransient<IValidator<RegisterRequest>, RegisterRequestValidator>();
+            services.AddTransient<IValidator<UserUpdateRequest>, UserUpdateRequestValidator>();
             //Add FluentValitor
             services.AddControllersWithViews().AddFluentValidation();
 
             //ADD DI
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IUserApiClient, UserApiClient>();
             //Add Razorpage
             services.AddRazorPages()

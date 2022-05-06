@@ -54,7 +54,8 @@ namespace eShopSolutionBackendApi
             //Add FluentValidation
             services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddTransient<IValidator<RegisterRequest>, RegisterRequestValidator>();
-            //services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
+            //services.AddTransient<IValidator<UserUpdateRequest>, UserUpdateRequestValidator>();
+            //Add All FluentValidation
             services.AddControllers()
                 .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<LoginRequestValidator>());
 

@@ -6,6 +6,7 @@ using eShopSolution.ViewModels.Catalog.Product;
 using eShopSolution.ViewModels.Catalog.ProductImages;
 using eShopSolution.ViewModels.Catalog.Result;
 using eShopSolution.ViewModels.Common;
+using eShopSolution.ViewModels.Result;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -445,7 +446,8 @@ namespace eShopSolution.Application.Catalog.Products
                         PagNumber = (int)Math.Ceiling(TotalRow / (double)request.PageSize), //(TotalRow - request.PageSize) + 1,
                         currentpage = request.PageIndex,
                     };
-                    return new ResultModel
+                    return
+                    new ResultModel
                     {
                         Result = true,
                         Message = "Get list product successfully!",
