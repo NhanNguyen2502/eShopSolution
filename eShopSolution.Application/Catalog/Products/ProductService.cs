@@ -443,8 +443,8 @@ namespace eShopSolution.Application.Catalog.Products
                     {
                         TotalRecord = TotalRow,
                         Items = data,
-                        PagNumber = (int)Math.Ceiling(TotalRow / (double)request.PageSize), //(TotalRow - request.PageSize) + 1,
-                        currentpage = request.PageIndex,
+                        pagSize = request.PageSize,
+                        pageIndex = request.PageIndex,
                     };
                     return
                     new ResultModel

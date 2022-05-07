@@ -26,7 +26,7 @@ namespace eshopSolution.AdminAPP.Controllers
             _iuserApiClient = iuserApiClient;
         }
 
-        public async Task<IActionResult> Index(string keyword, int pageindex = 1, int pagsize = 10)
+        public async Task<IActionResult> Index(string keyword, int pageindex = 1, int pagsize = 3)
         {
             var session = HttpContext.Session.GetString("Token");
             var request = new GetUserPagingRequest()
@@ -71,6 +71,8 @@ namespace eshopSolution.AdminAPP.Controllers
         [HttpPost]
         public async Task<IActionResult> Edit(UserUpdateRequest request)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
             var result = await _iuserApiClient.UpdateUser(request.id, request);
             if (result.IsSuccessed)
                 return RedirectToAction("Index");

@@ -158,8 +158,8 @@ namespace eShopSolution.Application.System.Users
                 {
                     TotalRecord = Totalrow,
                     Items = Datasort,
-                    PagNumber = (int)Math.Ceiling(Totalrow / (double)request.PageSize),
-                    currentpage = request.PageIndex,
+                    pagSize = request.PageSize,
+                    pageIndex = request.PageIndex,
                 };
                 return new ApiSuccessResult<PagedResult<UserVM>>(Pageresult);
             }
@@ -207,6 +207,7 @@ namespace eShopSolution.Application.System.Users
                 var userVM = new UserVM()
                 {
                     id = query.Id,
+                    UserName = query.UserName,
                     FirstName = query.FirstName,
                     LastName = query.LastName,
                     Email = query.Email,
