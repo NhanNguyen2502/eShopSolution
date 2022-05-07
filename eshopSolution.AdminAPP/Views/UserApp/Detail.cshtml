@@ -5,57 +5,67 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Detail</h1>
-<table class="table table-bordered" style="width:auto">
-    <tr>
-        <th class="col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <td class="col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </td>
-    </tr>
-    <tr>
-        <th class="col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <td class="col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </td>
-    </tr>
-    <tr>
-        <th class="col-sm-2">
-            @Html.DisplayNameFor(model => model.PhoneNumber)
-        </th>
-        <td class="col-sm-10">
-            @Html.DisplayFor(model => model.PhoneNumber)
-        </td>
-    </tr>
-    <tr>
-        <th class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Dob)
-        </th>
-        <td class="col-sm-10">
-            @Html.DisplayFor(model => model.Dob)
-        </td>
-    </tr>
-    <tr>
-        <th class="col-sm-2">
-            @Html.DisplayNameFor(model => model.Email)
-        </th>
-        <td class="col-sm-10">
-            @Html.DisplayFor(model => model.Email)
-        </td>
-    </tr>
-    <tr>
-        <th class="col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </th>
-        <td class="col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
-        </td>
-    </tr>
-</table>
+<h1>Detail @Html.DisplayFor(Model => Model.UserName)</h1>
+
+<div class="container-fluid px-4">   
+    <div class="card mb-4">
+    </div>
+    <div class="card mb-4">
+
+        <div class="card-body">
+            <table class="table table-bordered" style="width:auto">
+                <tr>
+                    <th class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.FirstName)
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.FirstName)
+                    </td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.LastName)
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.LastName)
+                    </td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.PhoneNumber)
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.PhoneNumber)
+                    </td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Dob)
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.Dob)
+                    </td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.Email)
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.Email)
+                    </td>
+                </tr>
+                <tr>
+                    <th class="col-sm-2">
+                        @Html.DisplayNameFor(model => model.CreatedAt)
+                    </th>
+                    <td class="col-sm-10">
+                        @Html.DisplayFor(model => model.CreatedAt)
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
 <div>
     @Html.ActionLink("Edit", "Edit", new { id = Model.id }) |
     <a asp-action="Index">Back to List</a>

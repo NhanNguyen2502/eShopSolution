@@ -16,12 +16,5 @@ namespace eShopSolution.ViewModels.Result
             IsSuccessed = true;
             ResultObj = resultObj;
         }
-
-        public ApiSuccessResult(string message, T resultObj)
-        {
-            IsSuccessed = true;
-            Message = message;
-            ResultObj = resultObj;
-        }
     }
 }
