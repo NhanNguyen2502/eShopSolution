@@ -11,56 +11,74 @@
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active">Danh Sách Người Dùng</li>
     </ol>
-    <div class="card mb-4">
-    </div>
-    <div class="card mb-4">
 
-        <div class="card-body">
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
+    <div class="card mb-4">
+        <div class="card mb-12">
 
-                        <th>
-                            UserName
-                        </th>
-                        <th>
-                            DoB
-                        </th>
-                        <th>
-                            Email
-                        </th>
-                        <th>
-                            CreatedAt
-                        </th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Items)
-                    {
+            <div class="card-header">
+                <div class="row">
+                    <div class="col-md-6 col-xs-12">
+                        <form asp-action="Index" method="get">
+                            <div class="row">
+                                <div class="col-md-9">
+                                    <input type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" placeholder="User or Email" />
+                                </div>
+                                <div class="cold-md-3">
+                                    <button type="submit" class="btn btn-primary">Tìm</button>
+                                    <button type="button" onclick="window.location.href='/Userapp/Index'" class="btn btn-dark">Reset</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card-body">
+                <table class="table table-bordered " id="datatables">
+                    <thead>
                         <tr>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.UserName)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Dob)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.Email)
-                            </td>
-                            <td>
-                                @Html.DisplayFor(modelItem => item.CreatedAt)
-                            </td>
-                            <td>
-                                @Html.ActionLink("Edit", "Edit", new { id = item.id }) |
-                                @Html.ActionLink("Detail", "Detail", new { id = item.id }) |
-                                @Html.ActionLink("Delete", "Delete", new { id = item.id })
-                            </td>
+                            <th>
+                                UserName
+                            </th>
+                            <th>
+                                DoB
+                            </th>
+                            <th>
+                                Email
+                            </th>
+                            <th>
+                                CreatedAt
+                            </th>
+                            <th></th>
                         </tr>
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.UserName)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Dob)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.Email)
+                                </td>
+                                <td>
+                                    @Html.DisplayFor(modelItem => item.CreatedAt)
+                                </td>
+                                <td>
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.id }) |
+                                    @Html.ActionLink("Detail", "Detail", new { id = item.id }) |
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.id })
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+            <div style="padding-left:40%; padding-right:50%;width:250px">@await Component.InvokeAsync("Pager", Model)</div>
         </div>
-        <div style="padding-left:40%; padding-right:50%;width:250px">@await Component.InvokeAsync("Pager", Model)</div>
-    </div>   
+    </div>
 </div>

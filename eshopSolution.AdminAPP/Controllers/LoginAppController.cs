@@ -38,9 +38,9 @@ namespace eshopSolution.AdminAPP.Controllers
         public async Task<IActionResult> Login(LoginRequest request)
         {
             if (!ModelState.IsValid)
-                return View(ModelState);
+                return BadRequest(ModelState);
             var token = await _iuserApiClient.Authenticate(request);
-            if (!token.IsSuccessed)
+            if (token.ResultObj == null)
             {
                 ModelState.AddModelError("", token.Message);
                 return View();
