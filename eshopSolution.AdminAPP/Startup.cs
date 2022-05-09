@@ -34,7 +34,7 @@ namespace eshopSolution.AdminAPP
             services.AddDistributedMemoryCache();
             services.AddSession(option =>
             {
-                option.IdleTimeout = TimeSpan.FromMinutes(5); //FromSeconds(30);
+                option.IdleTimeout = TimeSpan.FromMinutes(10); //FromSeconds(30);
                 option.Cookie.HttpOnly = true;
                 option.Cookie.IsEssential = true;
             });

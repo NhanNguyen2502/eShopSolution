@@ -240,5 +240,10 @@ namespace eShopSolution.Application.System.Users
                 return new ApiErrorResult<bool>(ex.Message);
             }
         }
+
+        public Task<APIResultMessage<object>> SuggestSearch(string keyword)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

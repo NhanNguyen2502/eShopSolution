@@ -2,7 +2,7 @@
 ## Technologies
 - ASP.NET Core 3.1
 - Entity Framwork Core 3.1
--Asp.net Core 5.0(MVC)
+- Asp.net Core 5.0(MVC)
 
 ## Install Packages
 - Microsoft.EntityFrameworkCore.Tools
