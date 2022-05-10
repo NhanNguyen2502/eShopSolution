@@ -93,5 +93,12 @@ namespace eShopSolutionBackendApi.Controllers
             var result = await _iuserservice.DeleteUser(id);
             return Ok(result);
         }
+
+        [HttpGet("suggestsearch/{keyword}")]
+        public async Task<IActionResult> SuggestSearch(string keyword)
+        {
+            var result = await _iuserservice.SuggestSearch(keyword);
+            return Ok(result);
+        }
     }
 }

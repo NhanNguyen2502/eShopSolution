@@ -1,10 +1,8 @@
-﻿using eShopSolution.ViewModels.Catalog.Result;
-using eShopSolution.ViewModels.Common;
+﻿using eShopSolution.ViewModels.Common;
 using eShopSolution.ViewModels.Result;
 using eShopSolution.ViewModels.System.Users;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace eShopSolution.Application.System.Users
@@ -23,6 +21,6 @@ namespace eShopSolution.Application.System.Users
 
         public Task<APIResultMessage<bool>> DeleteUser(Guid id);
 
-        public Task<APIResultMessage<object>> SuggestSearch(string keyword);
+        public Task<APIResultMessage<List<string>>> SuggestSearch(string keyword);
     }
 }

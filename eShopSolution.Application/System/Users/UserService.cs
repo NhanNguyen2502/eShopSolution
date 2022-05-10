@@ -146,7 +146,7 @@ namespace eShopSolution.Application.System.Users
                     .Take(request.PageSize)
                     .Select(x => new UserVM()
                     {
-                        id = x.Id,
+                        Id = x.Id,
                         UserName = x.UserName,
                         Dob = x.Dob,
                         Email = x.Email,
@@ -206,7 +206,7 @@ namespace eShopSolution.Application.System.Users
                 }
                 var userVM = new UserVM()
                 {
-                    id = query.Id,
+                    Id = query.Id,
                     UserName = query.UserName,
                     FirstName = query.FirstName,
                     LastName = query.LastName,
@@ -241,9 +241,13 @@ namespace eShopSolution.Application.System.Users
             }
         }
 
-        public Task<APIResultMessage<object>> SuggestSearch(string keyword)
+        public async Task<APIResultMessage<List<string>>> SuggestSearch(string keyword)
         {
-            throw new NotImplementedException();
+            var user = await _context.AppUsers.Where(x => x.UserName.Contains(keyword) || x.Email.Contains(keyword))
+                .Select(x => x.UserName).ToListAsync();
+            if (user.Count() > 0)
+                return new ApiSuccessResult<List<string>>(user);
+            return new ApiErrorResult<List<string>>("User dose not exist!");
         }
     }
 }
