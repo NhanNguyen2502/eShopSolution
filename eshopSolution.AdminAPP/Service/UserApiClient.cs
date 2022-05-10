@@ -85,6 +85,26 @@ namespace eshopSolution.AdminAPP.Service
             return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
         }
 
+        public async Task<APIResultMessage<List<string>>> SuggestSearch(string keywork)
+        {
+            try
+            {
+                var sesion = _httpcontextaccessor.HttpContext.Session.GetString("Token");
+                var client = _ihttpClientfactory.CreateClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sesion);
+                client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+                var reponse = await client.GetAsync($"/api/users/suggestsearch/{keywork}");
+                var body = await reponse.Content.ReadAsStringAsync();
+                if (reponse.IsSuccessStatusCode)
+                    return JsonConvert.DeserializeObject<ApiSuccessResult<List<string>>>(body);
+                return JsonConvert.DeserializeObject<ApiErrorResult<List<string>>>(body);
+            }
+            catch (Exception ex)
+            {
+                return new ApiErrorResult<List<string>>(ex.Message);
+            }
+        }
+
         public async Task<APIResultMessage<bool>> UpdateUser(Guid id, UserUpdateRequest request)
         {
             try

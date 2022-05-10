@@ -37,6 +37,6 @@ namespace eShopSolution.Application.Catalog.Products
 
         Task<ResultModel> GetAllCategory(string languageid, GetPublicProductPagingRequest request);
 
-        Task<ResultModel> Search(string term);
+        Task<APIResultMessage<List<string>>> Search(string term);
     }
 }

@@ -21,5 +21,7 @@ namespace eshopSolution.AdminAPP.Service
         public Task<APIResultMessage<UserVM>> UserbyId(Guid id);
 
         public Task<APIResultMessage<bool>> DeleteUser(Guid id);
+
+        public Task<APIResultMessage<List<string>>> SuggestSearch(string keywork);
     }
 }

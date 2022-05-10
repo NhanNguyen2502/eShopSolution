@@ -300,34 +300,20 @@ namespace eShopSolution.Application.Catalog.Products
             }
         }
 
-        public async Task<ResultModel> Search(string term)
+        public async Task<APIResultMessage<List<string>>> Search(string term)
         {
             try
             {
-                var names = await _Context.ProductTranslations.Where(p => p.Name.Contains(term)).Select(p => p.Name).ToArrayAsync();
-                if (names.Count() > 0)
+                var ProductName = await _Context.ProductTranslations.Where(p => p.Name.Contains(term)).Select(p => p.Name).ToListAsync();
+                if (ProductName.Count() > 0)
                 {
-                    return new ResultModel()
-                    {
-                        Data = names,
-                        Result = true,
-                        Message = "aaa"
-                    };
+                    return new ApiSuccessResult<List<string>>(ProductName);
                 }
-
-                return new ResultModel()
-                {
-                    Result = false,
-                    Message = "data does not exist!"
-                };
+                return new ApiErrorResult<List<string>>("ProductName not found!");
             }
             catch (Exception ex)
             {
-                return new ResultModel()
-                {
-                    Message = ex.Message,
-                    Result = false
-                };
+                return new ApiErrorResult<List<string>>(ex.Message);
             }
         }
 

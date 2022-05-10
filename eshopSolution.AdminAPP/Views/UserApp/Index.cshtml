@@ -5,7 +5,13 @@
     ViewData["Title"] = "Danh Sách Người dùng";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-
+<script>
+    $(document).ready(function () {
+        $('#searching').autocomplete({
+            source: '/UserApp/SuggestSearch'
+        });
+    });
+</script>
 <div class="container-fluid px-4">
     <h1 class="mt-4">Danh Sách Người Dùng</h1>
     <ol class="breadcrumb mb-4">
@@ -21,7 +27,7 @@
                         <form asp-action="Index" method="get">
                             <div class="row">
                                 <div class="col-md-9">
-                                    <input type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" placeholder="User or Email" />
+                                    <input id="searching" type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" placeholder="User or Email" />
                                 </div>
                                 <div class="cold-md-3">
                                     <button type="submit" class="btn btn-primary">Tìm</button>
@@ -69,9 +75,9 @@
                                     @Html.DisplayFor(modelItem => item.CreatedAt)
                                 </td>
                                 <td>
-                                    @Html.ActionLink("Edit", "Edit", new { id = item.id }) |
-                                    @Html.ActionLink("Detail", "Detail", new { id = item.id }) |
-                                    @Html.ActionLink("Delete", "Delete", new { id = item.id })
+                                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                                    @Html.ActionLink("Detail", "Detail", new { id = item.Id }) |
+                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
                                 </td>
                             </tr>
                         }

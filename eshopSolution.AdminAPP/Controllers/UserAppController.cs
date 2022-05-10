@@ -57,7 +57,7 @@ namespace eshopSolution.AdminAPP.Controllers
                 var user = result.ResultObj;
                 var updaterequest = new UserUpdateRequest()
                 {
-                    id = user.id,
+                    id = user.Id,
                     FirstName = user.FirstName,
                     LastName = user.LastName,
                     Dob = user.Dob,
@@ -105,6 +105,25 @@ namespace eshopSolution.AdminAPP.Controllers
         {
             var result = await _iuserApiClient.UserbyId(id);
             return View(result.ResultObj);
+        }
+
+        //[HttpGet]
+        //public IActionResult SuggestSearch()
+        //{
+        //    return View();
+        //}
+
+        [HttpGet]
+        public async Task<IActionResult> SuggestSearch()
+        {
+            string keyword = HttpContext.Request.Query["term"].ToString();
+            var result = await _iuserApiClient.SuggestSearch(keyword);
+            if (result.IsSuccessed)
+            {
+                return Ok(result.ResultObj);
+            }
+            //ModelState.AddModelError("", result.Message);
+            return Ok(result.ResultObj);
         }
     }
 }
