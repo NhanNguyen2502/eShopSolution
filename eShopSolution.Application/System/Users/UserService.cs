@@ -133,6 +133,7 @@ namespace eShopSolution.Application.System.Users
             try
             {
                 var query = _userManager.Users;
+
                 //Filter
                 if (!string.IsNullOrEmpty(request.Keyword))
                 {
@@ -141,23 +142,23 @@ namespace eShopSolution.Application.System.Users
                 }
                 //Step3: Paging
                 int Totalrow = await query.CountAsync();
+                var user = await query.Select(x => new UserVM()
+                {
+                    Id = x.Id,
+                    UserName = x.UserName,
+                    Dob = x.Dob,
+                    Email = x.Email,
+                    CreatedAt = x.CreatedAt
+                }).ToListAsync();
+                var datasort = user.OrderByDescending(i => i.CreatedAt).ToList();
+                var data = datasort.Skip((request.PageIndex - 1) * request.PageSize)
+                    .Take(request.PageSize).ToList();
 
-                var data = await query.Skip((request.PageIndex - 1) * request.PageSize)
-                    .Take(request.PageSize)
-                    .Select(x => new UserVM()
-                    {
-                        Id = x.Id,
-                        UserName = x.UserName,
-                        Dob = x.Dob,
-                        Email = x.Email,
-                        CreatedAt = x.CreatedAt
-                    }).ToListAsync();
-                var Datasort = data.OrderByDescending(i => i.CreatedAt).ToList();
                 //Step4: Select and Projection
                 var Pageresult = new PagedResult<UserVM>
                 {
                     TotalRecord = Totalrow,
-                    Items = Datasort,
+                    Items = data,
                     pagSize = request.PageSize,
                     pageIndex = request.PageIndex,
                 };
@@ -243,7 +244,7 @@ namespace eShopSolution.Application.System.Users
 
         public async Task<APIResultMessage<List<string>>> SuggestSearch(string keyword)
         {
-            var user = await _context.AppUsers.Where(x => x.UserName.Contains(keyword) || x.Email.Contains(keyword))
+            var user = await _context.AppUsers.Where(x => x.UserName.Contains(keyword) || x.Email.Contains(keyword)).Take(5)
                 .Select(x => x.UserName).ToListAsync();
             if (user.Count() > 0)
                 return new ApiSuccessResult<List<string>>(user);

@@ -5,18 +5,39 @@
     ViewData["Title"] = "Danh Sách Người dùng";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<script>
-    $(document).ready(function () {
-        $('#searching').autocomplete({
-            source: '/UserApp/SuggestSearch'
+@section Scripts{
+    <script>
+        $(document).ready(function () {
+            $('#searching').autocomplete({
+                source: '/UserApp/SuggestSearch'
+            });
         });
-    });
-</script>
+        setTimeout(function () {
+            $('#msgAlert').fadeOut('slow');
+        }, 2000);
+        $(document).ready(function () {
+            $('#row-table').autocomplete({
+                source: '/UserApp/index'
+            })
+        });
+    </script>
+}
+
 <div class="container-fluid px-4">
     <h1 class="mt-4">Danh Sách Người Dùng</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active">Danh Sách Người Dùng</li>
     </ol>
+    <div class="row">
+        <div class="col-md-6" style="height:auto">
+            @if (TempData["result"] != null)
+            {
+                <div id="msgAlert" class="alert alert-success" role="alert">
+                    @ViewBag.SuccessMsg
+                </div>
+            }
+        </div>
+    </div>
 
     <div class="card mb-4">
         <div class="card mb-12">
@@ -26,12 +47,14 @@
                     <div class="col-md-6 col-xs-12">
                         <form asp-action="Index" method="get">
                             <div class="row">
-                                <div class="col-md-9">
-                                    <input id="searching" type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" placeholder="User or Email" />
-                                </div>
-                                <div class="cold-md-3">
-                                    <button type="submit" class="btn btn-primary">Tìm</button>
-                                    <button type="button" onclick="window.location.href='/Userapp/Index'" class="btn btn-dark">Reset</button>
+                                <div class="col-md-12">
+                                    <div class="col-md-6" style="float:left">
+                                        <input id="searching" type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" placeholder="User or Email" />                                        
+                                    </div>
+                                    <div class="col-md-3" style="float:left; padding-left:5px">
+                                        <button type="submit" class="btn btn-primary">Tìm</button>
+                                        <button type="button" onclick="window.location.href='/Userapp/Index'" class="btn btn-dark">Reset</button>
+                                    </div>
                                 </div>
                             </div>
                         </form>
@@ -40,6 +63,9 @@
             </div>
 
             <div class="card-body">
+                <div class="row">
+                </div>
+
                 <table class="table table-bordered " id="datatables">
                     <thead>
                         <tr>
@@ -83,6 +109,14 @@
                         }
                     </tbody>
                 </table>
+                @*<form method="get">
+                        <select name="row-table">
+                            <option selected="selected" value="3">3</option>
+                            <option id="row-table" value="5">5</option>
+                            <option id="row-table" value="10">10</option>
+                            <option id="row-table" value="20">20</option>
+                        </select>
+                    </form>*@
             </div>
             <div style="padding-left:40%; padding-right:50%;width:250px">@await Component.InvokeAsync("Pager", Model)</div>
         </div>
