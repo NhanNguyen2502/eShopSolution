@@ -26,17 +26,23 @@ namespace eshopSolution.AdminAPP.Controllers
             _iuserApiClient = iuserApiClient;
         }
 
-        public async Task<IActionResult> Index(string keyword, int pageindex = 1, int pagsize = 3)
+        public async Task<IActionResult> Index(string keyword, int pageindex = 1, int pagsize = 10)
         {
             var session = HttpContext.Session.GetString("Token");
             var request = new GetUserPagingRequest()
             {
                 Keyword = keyword,
                 PageIndex = pageindex,
-                PageSize = pagsize
+                PageSize = pagsize,
             };
             var data = await _iuserApiClient.Listuser(request);
             ViewBag.Keyword = keyword;
+
+            if (TempData["result"] != null)
+            {
+                ViewBag.SuccessMsg = TempData["result"];
+            }
+
             return View(data.ResultObj);
         }
 
@@ -76,7 +82,11 @@ namespace eshopSolution.AdminAPP.Controllers
                 return BadRequest(ModelState);
             var result = await _iuserApiClient.UpdateUser(request.id, request);
             if (result.IsSuccessed)
+            {
+                TempData["result"] = "Update Successfully!";
                 return RedirectToAction("Index");
+            }
+
             ModelState.AddModelError("", result.Message);
             return View(request);
         }
@@ -95,7 +105,11 @@ namespace eshopSolution.AdminAPP.Controllers
         {
             var result = await _iuserApiClient.DeleteUser(request.Id);
             if (result.IsSuccessed)
+            {
+                TempData["result"] = "Delete successfully!";
                 return RedirectToAction("Index");
+            }
+
             ModelState.AddModelError("", result.Message);
             return View();
         }
@@ -107,12 +121,6 @@ namespace eshopSolution.AdminAPP.Controllers
             return View(result.ResultObj);
         }
 
-        //[HttpGet]
-        //public IActionResult SuggestSearch()
-        //{
-        //    return View();
-        //}
-
         [HttpGet]
         public async Task<IActionResult> SuggestSearch()
         {
@@ -122,7 +130,6 @@ namespace eshopSolution.AdminAPP.Controllers
             {
                 return Ok(result.ResultObj);
             }
-            //ModelState.AddModelError("", result.Message);
             return Ok(result.ResultObj);
         }
     }

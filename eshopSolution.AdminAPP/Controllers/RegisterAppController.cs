@@ -20,6 +20,10 @@ namespace eshopSolution.AdminAPP.Controllers
         [HttpGet]
         public IActionResult Register()
         {
+            if (TempData["result"] != null)
+            {
+                ViewBag.SuccessMsg = TempData["result"];
+            }
             return View();
         }
 
@@ -32,8 +36,12 @@ namespace eshopSolution.AdminAPP.Controllers
                     return BadRequest(ModelState);
                 var result = await _iuserApiClient.register(request);
                 if (result.IsSuccessed == true)
-                    return View(result.IsSuccessed);
-                return View(result.Message);
+                {
+                    TempData["result"] = "Register Successfully!";
+                    return RedirectToAction("Register");
+                }
+                TempData["result"] = result.Message;
+                return RedirectToAction("Register");
             }
             catch (Exception ex)
             {
