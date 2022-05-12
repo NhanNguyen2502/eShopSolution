@@ -55,11 +55,14 @@ namespace eShopSolution.Application.System.Users
                 var roles = await _userManager.GetRolesAsync(user);
                 var claims = new[]
                 {
-                new Claim(ClaimTypes.Email,user.Email),
-                new Claim(ClaimTypes.Name,user.UserName),
-                new Claim(ClaimTypes.GivenName,user.FirstName),
-                new Claim(ClaimTypes.Role, string.Join(";",roles))
-            };
+                //new Claim(ClaimTypes.Email,user.Email),
+                //new Claim(ClaimTypes.Name,user.UserName),
+                //new Claim(ClaimTypes.GivenName,user.FirstName),
+                //new Claim(ClaimTypes.Role, string.Join(";",roles))
+                new Claim("email",user.Email),
+                 new Claim("userNam",user.UserName),
+                 new Claim("roles", string.Join(";",roles))
+                 };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
                 var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
 
@@ -100,7 +103,14 @@ namespace eShopSolution.Application.System.Users
                 };
                 var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded) //throw new EShopException($"Register Successfully");
+                {
+                    var roleUser = _roleManager.FindByNameAsync("user").Result;
+                    if (roleUser != null)
+                    {
+                        await _userManager.AddToRoleAsync(user, roleUser.Name);
+                    }
                     return new ApiSuccessResult<bool>();
+                }
 
                 return new ApiErrorResult<bool>("Register Fail");
             }
@@ -205,6 +215,7 @@ namespace eShopSolution.Application.System.Users
                 {
                     return new ApiErrorResult<UserVM>("User dose not exist!");
                 }
+                var roles = await _userManager.GetRolesAsync(query);
                 var userVM = new UserVM()
                 {
                     Id = query.Id,
@@ -214,7 +225,8 @@ namespace eShopSolution.Application.System.Users
                     Email = query.Email,
                     Dob = query.Dob,
                     PhoneNumber = query.PhoneNumber,
-                    CreatedAt = query.CreatedAt
+                    CreatedAt = query.CreatedAt,
+                    Roles = roles
                 };
                 return new ApiSuccessResult<UserVM>(userVM);
             }
@@ -230,7 +242,14 @@ namespace eShopSolution.Application.System.Users
             {
                 var user = await _userManager.FindByIdAsync(id.ToString());
                 if (user == null)
+                {
                     return new ApiErrorResult<bool>("User does not exist!");
+                }
+                var roles = await _userManager.GetRolesAsync(user);
+                foreach (var roleName in roles)
+                {
+                    await _userManager.RemoveFromRoleAsync(user, roleName);
+                }
                 var result = await _userManager.DeleteAsync(user);
                 if (result.Succeeded)
                     return new ApiSuccessResult<bool>();
@@ -249,6 +268,36 @@ namespace eShopSolution.Application.System.Users
             if (user.Count() > 0)
                 return new ApiSuccessResult<List<string>>(user);
             return new ApiErrorResult<List<string>>("User dose not exist!");
+        }
+
+        public async Task<APIResultMessage<bool>> RoleAssign(Guid Id, RoleAssignRequest request)
+        {
+            var user = await _userManager.FindByIdAsync(Id.ToString());
+            if (user == null)
+            {
+                return new ApiErrorResult<bool>("Account does not exist!");
+            }
+            var removeRoles = request.Roles.Where(x => x.Selected == false).Select(x => x.Name)
+                .ToList();
+            foreach (var roleName in removeRoles)
+            {
+                if (await _userManager.IsInRoleAsync(user, roleName) == true)
+                {
+                    await _userManager.RemoveFromRoleAsync(user, roleName);
+                }
+            }
+            await _userManager.RemoveFromRolesAsync(user, removeRoles);
+
+            var addRoles = request.Roles.Where(x => x.Selected == true).Select(x => x.Name)
+                .ToList();
+            foreach (var roleName in addRoles)
+            {
+                if (await _userManager.IsInRoleAsync(user, roleName) == false)
+                {
+                    await _userManager.AddToRoleAsync(user, roleName);
+                }
+            }
+            return new ApiSuccessResult<bool>();
         }
     }
 }

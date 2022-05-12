@@ -56,6 +56,7 @@ namespace eshopSolution.AdminAPP
             //ADD DI
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IUserApiClient, UserApiClient>();
+            services.AddTransient<IRoleApiClient, RoleApiClient>();
             //Add Razorpage
             services.AddRazorPages()
             .AddRazorRuntimeCompilation();

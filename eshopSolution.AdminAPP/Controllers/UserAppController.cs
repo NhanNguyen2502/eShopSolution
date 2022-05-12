@@ -1,4 +1,5 @@
 ﻿using eshopSolution.AdminAPP.Service;
+using eShopSolution.ViewModels.Common;
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -20,10 +21,12 @@ namespace eshopSolution.AdminAPP.Controllers
     public class UserAppController : BaseController
     {
         private readonly IUserApiClient _iuserApiClient;
+        private readonly IRoleApiClient _iroleApiClient;
 
-        public UserAppController(IUserApiClient iuserApiClient)
+        public UserAppController(IUserApiClient iuserApiClient, IRoleApiClient iroleApiClient)
         {
             _iuserApiClient = iuserApiClient;
+            _iroleApiClient = iroleApiClient;
         }
 
         public async Task<IActionResult> Index(string keyword, int pageindex = 1, int pagsize = 10)
@@ -131,6 +134,46 @@ namespace eshopSolution.AdminAPP.Controllers
                 return Ok(result.ResultObj);
             }
             return Ok(result.ResultObj);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> RolesAssign(Guid Id)
+        {
+            var roleAssignRequst = await GetRoleAssignRequest(Id);
+            return View(roleAssignRequst);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> RolesAssign(RoleAssignRequest request)
+        {
+            if (!ModelState.IsValid)
+                return View();
+            var result = await _iuserApiClient.RoleAssign(request.Id, request);
+            if (result.IsSuccessed)
+            {
+                TempData["result"] = "Assign Successfully!";
+                return RedirectToAction("Index", "UserApp");
+            }
+            ModelState.AddModelError("", result.Message);
+            var roleAssignRequst = await GetRoleAssignRequest(request.Id);
+            return View(roleAssignRequst);
+        }
+
+        private async Task<RoleAssignRequest> GetRoleAssignRequest(Guid Id)
+        {
+            var userObj = await _iuserApiClient.UserbyId(Id);
+            var roleObj = await _iroleApiClient.GetAll();
+            var roleAssignRequest = new RoleAssignRequest();
+            foreach (var role in roleObj.ResultObj)
+            {
+                roleAssignRequest.Roles.Add(new SelectItem()
+                {
+                    Id = role.Id.ToString(),
+                    Name = role.Name,
+                    Selected = userObj.ResultObj.Roles.Contains(role.Name),
+                });
+            }
+            return roleAssignRequest;
         }
     }
 }
