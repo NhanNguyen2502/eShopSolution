@@ -85,6 +85,29 @@ namespace eshopSolution.AdminAPP.Service
             return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
         }
 
+        public async Task<APIResultMessage<bool>> RoleAssign(Guid Id, RoleAssignRequest request)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(request);
+                
+                var sesion = _httpcontextaccessor.HttpContext.Session.GetString("Token");
+                var httpcontent = new StringContent(json, Encoding.UTF8, "application/json");
+                var client = _ihttpClientfactory.CreateClient();
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", sesion);
+                client.BaseAddress = new Uri(_configuration["BaseAddress"]);
+                var reponse = await client.PutAsync($"/api/users/rolesassign/{Id}/roles", httpcontent);
+                var body = await reponse.Content.ReadAsStringAsync();
+                if (reponse.IsSuccessStatusCode)
+                    return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
+                return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
+            }
+            catch (Exception ex)
+            {
+                return new ApiErrorResult<bool>(ex.Message);
+            }
+        }
+
         public async Task<APIResultMessage<List<string>>> SuggestSearch(string keywork)
         {
             try

@@ -22,5 +22,7 @@ namespace eShopSolution.Application.System.Users
         public Task<APIResultMessage<bool>> DeleteUser(Guid id);
 
         public Task<APIResultMessage<List<string>>> SuggestSearch(string keyword);
+
+        public Task<APIResultMessage<bool>> RoleAssign(Guid Id, RoleAssignRequest request);
     }
 }

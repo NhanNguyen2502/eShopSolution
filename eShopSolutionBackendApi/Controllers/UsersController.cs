@@ -100,5 +100,16 @@ namespace eShopSolutionBackendApi.Controllers
             var result = await _iuserservice.SuggestSearch(keyword);
             return Ok(result);
         }
+
+        [HttpPut("rolesassign/{Id}/roles")]
+        public async Task<IActionResult> RoleAssign(Guid Id, [FromBody] RoleAssignRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var result = await _iuserservice.RoleAssign(Id, request);
+            if (!result.IsSuccessed)
+                return BadRequest(result);
+            return Ok(result);
+        }
     }
 }
