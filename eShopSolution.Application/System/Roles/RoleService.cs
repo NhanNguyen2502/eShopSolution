@@ -20,15 +20,26 @@ namespace eShopSolution.Application.System.Roles
             _roleManager = roleManager;
         }
 
-        public async Task<List<RoleVM>> GetAll()
+        public async Task<APIResultMessage<List<RoleVM>>> GetAll()
         {
-            var roles = await _roleManager.Roles.Select(x => new RoleVM()
+            try
             {
-                Id = x.Id,
-                Name = x.Name,
-                Description = x.Description
-            }).ToListAsync();
-            return roles;
+                var roles = await _roleManager.Roles.Select(x => new RoleVM()
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    Description = x.Description
+                }).ToListAsync();
+                if (roles != null)
+                {
+                    return new ApiSuccessResult<List<RoleVM>>(roles);
+                }
+                return new ApiErrorResult<List<RoleVM>>();
+            }
+            catch (Exception ex)
+            {
+                return new ApiErrorResult<List<RoleVM>>(ex.Message);
+            }
         }
     }
 }
