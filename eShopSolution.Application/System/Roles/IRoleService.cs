@@ -9,6 +9,6 @@ namespace eShopSolution.Application.System.Roles
 {
     public interface IRoleService
     {
-        public Task<List<RoleVM>> GetAll();
+        public Task<APIResultMessage<List<RoleVM>>> GetAll();
     }
 }

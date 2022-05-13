@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -29,9 +30,9 @@ namespace eshopSolution.AdminAPP.Controllers
             _iroleApiClient = iroleApiClient;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index(string keyword, int pageindex = 1, int pagsize = 10)
         {
-            var session = HttpContext.Session.GetString("Token");
             var request = new GetUserPagingRequest()
             {
                 Keyword = keyword,

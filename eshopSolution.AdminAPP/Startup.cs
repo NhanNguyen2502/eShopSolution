@@ -34,7 +34,7 @@ namespace eshopSolution.AdminAPP
             services.AddDistributedMemoryCache();
             services.AddSession(option =>
             {
-                option.IdleTimeout = TimeSpan.FromMinutes(10); //FromSeconds(30);
+                option.IdleTimeout = TimeSpan.FromMinutes(30);
                 option.Cookie.HttpOnly = true;
                 option.Cookie.IsEssential = true;
             });
@@ -57,6 +57,7 @@ namespace eshopSolution.AdminAPP
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IUserApiClient, UserApiClient>();
             services.AddTransient<IRoleApiClient, RoleApiClient>();
+            services.AddTransient<ILanguageApiClient, LanguageApiClient>();
             //Add Razorpage
             services.AddRazorPages()
             .AddRazorRuntimeCompilation();

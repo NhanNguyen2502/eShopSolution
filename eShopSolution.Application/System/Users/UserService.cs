@@ -59,8 +59,9 @@ namespace eShopSolution.Application.System.Users
                 //new Claim(ClaimTypes.Name,user.UserName),
                 //new Claim(ClaimTypes.GivenName,user.FirstName),
                 //new Claim(ClaimTypes.Role, string.Join(";",roles))
-                new Claim("email",user.Email),
-                 new Claim("userNam",user.UserName),
+                 new Claim(ClaimTypes.Name,user.UserName),
+                 new Claim("email",user.Email),
+                 new Claim("userName",user.UserName),
                  new Claim("roles", string.Join(";",roles))
                  };
                 var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Tokens:Key"]));
@@ -286,7 +287,7 @@ namespace eShopSolution.Application.System.Users
                     await _userManager.RemoveFromRoleAsync(user, roleName);
                 }
             }
-            await _userManager.RemoveFromRolesAsync(user, removeRoles);
+        
 
             var addRoles = request.Roles.Where(x => x.Selected == true).Select(x => x.Name)
                 .ToList();
