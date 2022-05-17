@@ -65,7 +65,8 @@ namespace eshopSolution.AdminAPP.Service
             var client = _ihttpClientfactory.CreateClient();
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", session);
-            var reponse = await client.GetAsync($"/api/users/listuser?Keyword=" + $"{request.Keyword}&PageIndex={ request.PageIndex}&PageSize={request.PageSize}");
+            var reponse = await client.GetAsync($"/api/users/listuser?Keyword=" + 
+                $"{request.Keyword}&PageIndex={ request.PageIndex}&PageSize={request.PageSize}");
             var body = await reponse.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<ApiSuccessResult<PagedResult<UserVM>>>(body);
         }

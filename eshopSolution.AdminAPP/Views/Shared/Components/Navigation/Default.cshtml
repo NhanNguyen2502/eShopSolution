@@ -1,7 +1,7 @@
 ﻿@model NavigationViewModel
 <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" href="index.html">Start Bootstrap</a>
+    <a class="navbar-brand ps-3" asp-action="Index" asp-controller="Home">Start Bootstrap</a>
     <!-- Sidebar Toggle-->
     <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0" id="sidebarToggle" href="#!"><i class="fas fa-bars"></i></button>
     <!-- Navbar Search-->
@@ -11,9 +11,9 @@
             <button class="btn btn-primary" id="btnNavbarSearch" type="button"><i class="fas fa-search"></i></button>
         </div>
     </form>
-    <form id="frmchangelanguage" class="d-none d-md-inline-block form-inline ms-0 me-0 me-md-3 my-2 my-md-0"
+    <form class="d-none d-md-inline-block form-inline ms-0 me-0 me-md-3 my-2 my-md-0"
           action="/Home/Language" method="post">
-        <select class="from-control" onchange="this.form.submit()" asp-for="CurrentLanguageID"
+        <select style=" height: 35px; border-radius:4px" class="from-control" onchange="this.form.submit()" asp-for="CurrentLanguageID"
                 asp-items="@(new SelectList(Model.Langguages,"Id","Name",Model.CurrentLanguageID))">
         </select>
     </form>

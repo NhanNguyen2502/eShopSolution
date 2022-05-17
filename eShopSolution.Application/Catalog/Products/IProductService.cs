@@ -11,21 +11,21 @@ namespace eShopSolution.Application.Catalog.Products
 {
     public interface IProductService
     {
-        Task<ResultModel> Create(ProductCreateRequest request);
+        Task<APIResultMessage<bool>> Create(ProductCreateRequest request);
 
-        Task<ResultModel> GetProductId(int ProductID, string LanguageId);
+        Task<APIResultMessage<ProductDetailVM>> GetProductId(int ProductID, string LanguageId);
 
-        Task<int> Update(ProductUpdateRequest request);
+        Task<APIResultMessage<bool>> Update(ProductUpdateRequest request);
 
-        Task<ResultModel> Delete(int ProductId);
+        Task<APIResultMessage<bool>> Delete(int ProductId);
 
-        Task<bool> UpdatePrice(int productId, decimal newPrice);
+        public Task<APIResultMessage<bool>> UpdatePrice(ProductUpdateRequest request);
 
         Task<bool> UpdateStock(int productId, int addQuality);
 
         Task<bool> AddViewCount(int ProductId);
 
-        Task<PagedResult<ProductViewModel>> GetAllPaging(GetManageProductPagingRequest request);
+        Task<APIResultMessage<PagedResult<ProductViewModel>>> GetAllPaging(GetManageProductPagingRequest request);
 
         Task<int> AddIamges(int productid, ProductImageCreateRequest request);
 
@@ -37,6 +37,6 @@ namespace eShopSolution.Application.Catalog.Products
 
         Task<ResultModel> GetAllCategory(string languageid, GetPublicProductPagingRequest request);
 
-        Task<APIResultMessage<List<string>>> Search(string term);
+        Task<APIResultMessage<List<string>>> Search(string keywork, string LanguageId);
     }
 }

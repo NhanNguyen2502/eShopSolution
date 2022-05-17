@@ -35,19 +35,28 @@ namespace eShopSolutionBackendApi.Controllers
             }
         }
 
-        [HttpGet("GetProductID")]
-        public async Task<IActionResult> GetProductID(int productid, string LanguageId)
+        [HttpGet("getproductpaging")]
+        public async Task<IActionResult> GetProductPaging([FromQuery] GetManageProductPagingRequest request)
+        {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+            var result = await _IProductService.GetAllPaging(request);
+            if (!result.IsSuccessed)
+                return BadRequest(result);
+            return Ok(result);
+        }
+
+        [HttpGet("{productid}/{LanguageId}")]
+        public async Task<IActionResult> ProductByID(int productid, string LanguageId)
         {
             try
             {
                 var product = await _IProductService.GetProductId(productid, LanguageId);
-                if (product == null)
-                    return BadRequest("Cannot Find Product!");
                 return Ok(product);
             }
             catch (Exception ex)
             {
-                return BadRequest(ex);
+                return BadRequest(ex.Message);
             }
         }
 
@@ -56,23 +65,23 @@ namespace eShopSolutionBackendApi.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState);
             }
-            var productID = await _IProductService.Create(request);
-            if (productID.Data == null)
-                return BadRequest("Create Fail");
-            var product = await _IProductService.GetProductId((int)productID.Data, request.LanguageId);
-            return CreatedAtAction(nameof(GetProductID), productID.Data, product);
-            //return Ok(productID);
+            var product = await _IProductService.Create(request);
+            if (!product.IsSuccessed)
+                return Ok(product);
+            //var product = await _IProductService.GetProductId((int)productID.Data, request.LanguageId);
+            //return CreatedAtAction(nameof(ProductByID), productID.Data, product);
+            return Ok(product);
         }
 
         [HttpPut("Update")]
         public async Task<IActionResult> Update([FromBody] ProductUpdateRequest request)
         {
             var affectedResult = await _IProductService.Update(request);
-            if (affectedResult == 0)
-                return BadRequest("Update Fail");
-            return Ok();
+            if (affectedResult.IsSuccessed)
+                return Ok(affectedResult);
+            return Ok(affectedResult);
         }
 
         [HttpGet("ListImage/{productid}")]
@@ -84,20 +93,20 @@ namespace eShopSolutionBackendApi.Controllers
             return BadRequest("Data can not found");
         }
 
-        [HttpDelete("Delete/{productid}")]
+        [HttpDelete("{productid}")]
         public async Task<IActionResult> Delete(int productid)
         {
             var affectedResult = await _IProductService.Delete(productid);
-            return Ok();
+            return Ok(affectedResult);
         }
 
-        [HttpPut("UpdatePrice/{productid}")]
-        public async Task<IActionResult> UpdatePrice(int productid, decimal newPrice)
+        [HttpPut("updatePrice")]
+        public async Task<IActionResult> UpdatePrice([FromForm] ProductUpdateRequest request)
         {
-            var isSuccessful = await _IProductService.UpdatePrice(productid, newPrice);
-            if (isSuccessful)
-                return Ok();
-            return BadRequest();
+            var result = await _IProductService.UpdatePrice(request);
+            if (result.IsSuccessed)
+                return Ok(result);
+            return Ok(result);
         }
 
         [HttpPost("AddImage/{productid}")]
@@ -126,11 +135,11 @@ namespace eShopSolutionBackendApi.Controllers
         }
 
         [HttpGet("search")]
-        public async Task<IActionResult> Search(string term)
+        public async Task<IActionResult> Search(string keyword, string LanguageId)
         {
             try
             {
-                var names = await _IProductService.Search(term);
+                var names = await _IProductService.Search(keyword, LanguageId);
                 return Ok(names);
             }
             catch

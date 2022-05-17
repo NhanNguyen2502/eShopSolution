@@ -16,13 +16,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\eShopSolutio.Utilities\eShopSolutio.Utilities.csproj" />
+    <ProjectReference Include="..\eShopSolutio.Utilities\eShopSolution.Utilities.csproj" />
     <ProjectReference Include="..\eShopSolution.Application\eShopSolution.Application.csproj" />
     <ProjectReference Include="..\eShopSolution.Data\eShopSolution.Data.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\user-content\" />
   </ItemGroup>
 
 </Project>

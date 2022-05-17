@@ -6,11 +6,11 @@
 }
 
 <h1>Delete</h1>
-<hr/>
+<hr />
 <h3>Are you sure you want to delete this?</h3>
 <div style="margin-left:3px">
 
-    <form asp-action="Delete">
+    <form asp-action="Delete" method="post">
         <input type="submit" value="Delete" class="btn btn-danger" /> |
         <button asp-action="Index" class="btn btn-primary">Cancel</button>
     </form>
