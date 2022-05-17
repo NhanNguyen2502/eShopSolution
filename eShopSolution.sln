@@ -14,7 +14,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopSolution.Data", "eShop
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopSolution.Application", "eShopSolution.Application\eShopSolution.Application.csproj", "{8A453896-972C-4666-ACFB-7C34E0FAE494}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopSolutio.Utilities", "eShopSolutio.Utilities\eShopSolutio.Utilities.csproj", "{1C5AE78B-5C10-485D-9180-D7D1B1A942A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopSolution.Utilities", "eShopSolutio.Utilities\eShopSolution.Utilities.csproj", "{1C5AE78B-5C10-485D-9180-D7D1B1A942A5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "eShopSolution.ViewModels", "eShopSolution.ViewModels\eShopSolution.ViewModels.csproj", "{668B46BA-1041-43DD-93D7-ADEBBBEBD8DE}"
 EndProject

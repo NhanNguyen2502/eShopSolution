@@ -34,6 +34,29 @@ namespace eShopSolution.Data.EF
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            //Config decimal
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Product>()
+                .Property(x => x.Price)
+                .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Product>()
+               .Property(x => x.OriginalPrice)
+               .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Cart>()
+               .Property(x => x.Price)
+               .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<OrderDetail>()
+              .Property(x => x.Price)
+              .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Promotion>()
+              .Property(x => x.DiscountAmount)
+              .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Transaction>()
+              .Property(x => x.Amount)
+              .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Transaction>()
+              .Property(x => x.Fee)
+              .HasColumnType("decimal(18,2)");
             //Configure  using Fluent API
             modelBuilder.ApplyConfiguration(new AppConfigConfiguration());
             modelBuilder.ApplyConfiguration(new ProductConfiguration());

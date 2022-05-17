@@ -1,0 +1,117 @@
+﻿@model eShopSolution.ViewModels.Catalog.Product.ProductCreateRequest
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Create new Product</h1>
+<hr />
+<div class="container-fluid px-4">
+    <div class="card mb-4">
+        <div class="card-body">
+            <form asp-action="Create" enctype="multipart/form-data" method="post">
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                <table class="table table-bordered" style="width:auto">
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="Name" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="Name" class="form-control" />
+                            <span asp-validation-for="Name" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="Price" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="Price" type="number" class="form-control" />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="OrOriginalPrice" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="OrOriginalPrice" class="form-control" type="number" />
+                            <span asp-validation-for="OrOriginalPrice" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="Stock" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="Stock" class="form-control" type="number" />
+                            <span asp-validation-for="Stock" class="text-danger"></span>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="Details" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="Details" class="form-control" />
+                            <span asp-validation-for="Details" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="DesDescription" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="DesDescription" class="form-control" />
+                            <span asp-validation-for="DesDescription" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="SeoTitle" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="SeoTitle" class="form-control" />
+                            <span asp-validation-for="SeoTitle" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="SeoDescription" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="SeoDescription" class="form-control" />
+                            <span asp-validation-for="SeoDescription" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="SeoAlias" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="SeoAlias" class="form-control" />
+                            <span asp-validation-for="SeoAlias" class="text-danger"></span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="col-sm-2">
+                            <label asp-for="ThumbnailImage" class="control-label"></label>
+                        </th>
+                        <td class="col-sm-10">
+                            <input asp-for="ThumbnailImage" class="form-control" type="file" />
+                            <span asp-validation-for="ThumbnailImage" class="text-danger"></span>
+                        </td>
+                    </tr>
+                </table>
+                <div class="form-group">
+                    <input type="submit" value="Save" class="btn btn-primary" />
+                </div>
+            </form>
+            <div>
+                <a asp-action="Index">Back to List</a>
+            </div>
+        </div>
+    </div>
+</div>
