@@ -1,7 +1,10 @@
-﻿using eshopSolution.AdminAPP.Service;
+﻿using eShopSolutio.Utilities.Contains;
+using eshopSolution.AdminAPP.Service;
 using eShopSolution.ViewModels.Catalog.Product;
+using eShopSolution.ViewModels.Common;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
@@ -16,27 +19,39 @@ namespace eshopSolution.AdminAPP.Controllers
     {
         private readonly IConfiguration _configuration;
         private readonly IProductApiClient _productApiClient;
+        private readonly ICategoryApiClient _categoryApiClient;
 
-        public productsAppController(IProductApiClient productApiClient, IConfiguration configuration)
+        public productsAppController(IProductApiClient productApiClient, IConfiguration configuration,
+            ICategoryApiClient categoryApiClient)
         {
             _productApiClient = productApiClient;
             _configuration = configuration;
+            _categoryApiClient = categoryApiClient;
         }
 
-        public async Task<IActionResult> Index(string keyword, int pageindex = 1, int pagesize = 10)
+        public async Task<IActionResult> Index(string keyword, int? categoryID, int pageindex = 1, int pagesize = 10)
         {
             try
             {
+                var languageId = HttpContext.Session.GetString(SystemConstains.AppSetting.DefaultLanguageIdsys);
                 var request = new GetManageProductPagingRequest()
                 {
                     Keyword = keyword,
                     PageIndex = pageindex,
                     PageSize = pagesize,
                     LanguageId = HttpContext.Session.GetString("DefaultLanguageId"),
+                    CategoryId = categoryID,
                 };
 
                 var result = await _productApiClient.GetAll(request);
                 ViewBag.Keyword = keyword;
+                var categories = await _categoryApiClient.GetAll(languageId);
+                ViewBag.categories = categories.ResultObj.Select(x => new SelectListItem()
+                {
+                    Text = x.Name,
+                    Value = x.Id.ToString(),
+                    Selected = categoryID.HasValue && categoryID.Value == x.Id
+                });
                 if (TempData["result"] != null)
                 {
                     ViewBag.SuccessMsg = TempData["result"];
@@ -49,15 +64,15 @@ namespace eshopSolution.AdminAPP.Controllers
             }
         }
 
-        //[HttpGet]
-        //public async Task<IActionResult> SuggestSearch()
-        //{
-        //    var keyword = HttpContext.Request.Query["term"].ToString();
-        //    var result = await _productApiClient.SuggestSearch(keyword);
-        //    if (result.IsSuccessed)
-        //        return Ok(result.ResultObj);
-        //    return Ok(result.ResultObj);
-        //}
+        [HttpGet]
+        public async Task<IActionResult> SuggestSearch()
+        {
+            var keyword = HttpContext.Request.Query["term"].ToString();
+            var result = await _productApiClient.SuggestSearch(keyword);
+            if (result.IsSuccessed)
+                return Ok(result.ResultObj);
+            return Ok(result.ResultObj);
+        }
 
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
@@ -66,31 +81,28 @@ namespace eshopSolution.AdminAPP.Controllers
             return View(result.ResultObj);
         }
 
-        [HttpGet]
-        public IActionResult Create()
-        {
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult Create()
+        //{
+        //    return View();
+        //}
 
         [HttpPost]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> Create(string name, decimal price, decimal orOriginalPrice,
             int stock, string desDescription, string details, string seoDescription, string seoTitle, string seoAlias, IFormFile thumbnailImage)
         {
-            //[FromForm] ProductCreateRequest request
-            //if (!ModelState.IsValid)
-            //    return View(request);
             var request = new ProductCreateRequest()
             {
-                Name= name,
+                Name = name,
                 Price = price,
-                OrOriginalPrice =orOriginalPrice,
-                Stock =stock,
-                DesDescription =desDescription,
-                Details =details,
-                SeoDescription=seoDescription,
-                SeoTitle =seoTitle,
-                SeoAlias =seoAlias,
+                OrOriginalPrice = orOriginalPrice,
+                Stock = stock,
+                DesDescription = desDescription,
+                Details = details,
+                SeoDescription = seoDescription,
+                SeoTitle = seoTitle,
+                SeoAlias = seoAlias,
                 ThumbnailImage = thumbnailImage,
             };
             var result = await _productApiClient.Created(request);
@@ -98,7 +110,7 @@ namespace eshopSolution.AdminAPP.Controllers
             {
                 TempData["result"] = "Created successfully!";
                 //return RedirectToAction("Index", "ProductsApp");
-                return Json (TempData["result"].ToString());
+                return Json(TempData["result"].ToString());
             }
             ModelState.AddModelError("", result.Message);
             return View(request);

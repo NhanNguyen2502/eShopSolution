@@ -6,6 +6,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 @section Scripts{
+
     <script>
         $(document).ready(function () {
             $('#searching').autocomplete({
@@ -27,15 +28,15 @@
             $('#DeleteProduct').insertAfter($('body'));
         }
 
-        var DeleteProduct= function () {
+        var DeleteProduct = function () {
             $("#DeleteProduct").hide();
-            var ProductID = $("#hiddenProductId").val();            
+            var ProductID = $("#hiddenProductId").val();
             $.ajax({
                 type: "POST",
                 url: "/ProductsApp/Delete",
                 data: { id: ProductID },
-                success: function (result) {                    
-                    $("#DeleteProduct").modal("hide");                                 
+                success: function (result) {
+                    $("#DeleteProduct").modal("hide");
                     $("#row_" + ProductID).remove();
                     $("#notificationDeleted").css("display", "block");
                     setTimeout(function () {
@@ -50,26 +51,26 @@
             });
         }
         var ConfirmCreate = function () {
-            $("#createProduct").modal('show');           
+            $("#createProduct").modal('show');
         }
-       
+
         var crProduct = function () {
             var form = $(crForm)[0];
-            var getdata = new FormData(form);          
+            var getdata = new FormData(form);
             $.ajax({
                 type: "POST",
                 url: "/ProductsApp/Create",
                 data: getdata,
                 processData: false,
                 contentType: false,
-                success: function (result) {                                
-                    $("#createProduct").modal("hide");                    
+                success: function (result) {
+                    $("#createProduct").modal("hide");
                     $("#notificationCreated").css("display", "block");
                     setTimeout(function () {
                         $("#notificationCreated").fadeOut('slow');
                         window.location.href = "/ProductsApp/Index/";
                     }, 5000);
-                    
+
                 },
                 error: function () {
                     alert("Error");
@@ -103,7 +104,7 @@
 
 <div class="modal" id="createProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
-        <div class="modal-content">
+        <div class="modal-content" style="width: 172%;">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Create Product</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
@@ -116,11 +117,11 @@
                     <table class="table table-bordered" style="width:auto">
                         <tr>
                             <th class="col-sm-2">
-                                <label  class="control-label">Name</label>
+                                <label class="control-label">Name</label>
                             </th>
                             <td class="col-sm-10">
-                                <input name="name" class="form-control" type="text" />
-                                <span  class="text-danger"></span>
+                                <input name="name" id="editor" class="form-control" type="text" />
+                                <span class="text-danger"></span>
                             </td>
                         </tr>
                         <tr>
@@ -129,7 +130,7 @@
                             </th>
                             <td class="col-sm-10">
                                 <input name="price" type="number" class="form-control" />
-                                <span  class="text-danger"></span>
+                                <span class="text-danger"></span>
                             </td>
                         </tr>
                         <tr>
@@ -138,16 +139,16 @@
                             </th>
                             <td class="col-sm-10">
                                 <input name="orOriginalPrice" class="form-control" type="number" />
-                                <span  class="text-danger"></span>
+                                <span class="text-danger"></span>
                             </td>
                         </tr>
                         <tr>
                             <th class="col-sm-2">
-                                <label  class="control-label">Stock</label>
+                                <label class="control-label">Stock</label>
                             </th>
                             <td class="col-sm-10">
                                 <input name="stock" class="form-control" type="number" />
-                                <span  class="text-danger"></span>
+                                <span class="text-danger"></span>
                             </td>
                         </tr>
 
@@ -157,7 +158,7 @@
                             </th>
                             <td class="col-sm-10">
                                 <input name="details" class="form-control" />
-                                <span  class="text-danger"></span>
+                                <span class="text-danger"></span>
                             </td>
                         </tr>
                         <tr>
@@ -175,7 +176,7 @@
                             </th>
                             <td class="col-sm-10">
                                 <input name="seoTitle" class="form-control" />
-                                <span  class="text-danger"></span>
+                                <span class="text-danger"></span>
                             </td>
                         </tr>
                         <tr>
@@ -184,7 +185,7 @@
                             </th>
                             <td class="col-sm-10">
                                 <input name="seoDescription" class="form-control" />
-                                <span  class="text-danger"></span>
+                                <span class="text-danger"></span>
                             </td>
                         </tr>
                         <tr>
@@ -202,10 +203,10 @@
                             </th>
                             <td class="col-sm-10">
                                 <input name="thumbnailImage" class="form-control" type="file" />
-                                <span  class="text-danger"></span>
+                                <span class="text-danger"></span>
                             </td>
                         </tr>
-                    </table>                   
+                    </table>
                 </form>
             </div>
             <div class="modal-footer">
@@ -222,23 +223,22 @@
     Delete successfully!
 </div>
 <div class="row" style="margin-top: 10px; float: right; width: 10%; margin-right: 30px;">
-    
-        @if (TempData["result"] != null)
-        {
-            <div id="msgAlert" class="alert alert-success" role="alert">
-                @ViewBag.SuccessMsg
-            </div>
-        }
- 
+
+    @if (TempData["result"] != null)
+    {
+        <div id="msgAlert" class="alert alert-success" role="alert">
+            @ViewBag.SuccessMsg
+        </div>
+    }
 </div>
 <div class="container-fluid px-4">
     <h1>Danh Sách Sản Phẩm</h1>
     <div id="PlaceHolderHere"></div>
     <p>
-        @*<a asp-action="Create">Create New Product</a>*@       
+        @*<a asp-action="Create">Create New Product</a>*@
         <button class="btn btn-success" onclick="ConfirmCreate()">Create New Product</button>
     </p>
-    
+
     <div class="card mb-4">
         <div class="card mb-12">
             <div class="card-header">
@@ -247,8 +247,13 @@
                         <form asp-action="Index" method="get">
                             <div class="row">
                                 <div class="col-md-12">
-                                    <div class="col-md-6" style="float:left">
+                                    <div class="col-md-3" style="float:left">
                                         <input id="searching" type="text" value="@ViewBag.Keyword" name="keyword" class="form-control" />
+                                    </div>
+                                    <div class="col-md-3" style="float:left">
+                                        <select name="categoryID" onchange="this.form.submit()" asp-items="@ViewBag.categories" class="form-control">
+                                            <option>--Select Category--</option>
+                                        </select>
                                     </div>
                                     <div class="col-md-3" style="float:left; padding-left:5px">
                                         <button type="submit" class="btn btn-primary">Search</button>

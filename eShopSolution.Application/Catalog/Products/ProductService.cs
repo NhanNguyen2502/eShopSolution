@@ -153,6 +153,9 @@ namespace eShopSolution.Application.Catalog.Products
                              from pi in _Context.ProductImages
                              .Where(x => x.ProductId == p.ID)
                              .DefaultIfEmpty()
+                             from pc in _Context.ProductInCategories
+                             .Where(x => x.ProductId == p.ID)
+                             .DefaultIfEmpty()
                              select new
                              {
                                  ProductId = p.ID,
@@ -162,16 +165,17 @@ namespace eShopSolution.Application.Catalog.Products
                                  Stock = p.Stock,
                                  Name = pt.Name,
                                  ImgLink = pi.ImagePath,
+                                 CategorId = pc.CategoryId,
                              });
 
                 var isCheck = string.IsNullOrEmpty(request.Keyword);
                 //Step2: Filter
                 if (!isCheck)
                     query = query.Where(x => x.Name.Contains(request.Keyword));
-                //if (request.CategoryIds != null && request.CategoryIds.Count > 0)
-                //{
-                //    query = query.Where(p => request.CategoryIds.Contains(p.pic.CategoryId));
-                //}
+                if (request.CategoryId != null && request.CategoryId != 0)
+                {
+                    query = query.Where(x => x.CategorId == request.CategoryId);
+                }
                 //Step3: Paging
                 int TotalRow = await query.CountAsync();
                 var products = await query.Select(x => new ProductViewModel()
@@ -182,7 +186,8 @@ namespace eShopSolution.Application.Catalog.Products
                     OriginalPrice = x.OriginalPrice,
                     Price = x.Price,
                     Stock = x.Stock,
-                    ImgLink = x.ImgLink != null ? _storageService.GetFileUrl(x.ImgLink) : _storageService.GetFileUrl("faf40bd2-7085-49cd-ae33-234fa2980aba.png") , //x.pi.ImagePath,
+                    CategoryId = x.CategorId.ToString() !=null ? x.CategorId: 0,
+                    ImgLink = x.ImgLink != null ? _storageService.GetFileUrl(x.ImgLink) : _storageService.GetFileUrl("faf40bd2-7085-49cd-ae33-234fa2980aba.png"), //x.pi.ImagePath,
                 }).ToListAsync();
                 var productsort = products.OrderByDescending(x => x.DateCreated);
                 var data = productsort.Skip((request.PageIndex - 1) * request.PageSize)
