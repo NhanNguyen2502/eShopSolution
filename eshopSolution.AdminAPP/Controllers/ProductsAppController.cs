@@ -49,15 +49,15 @@ namespace eshopSolution.AdminAPP.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<IActionResult> SuggestSearch()
-        {
-            var keyword = HttpContext.Request.Query["term"].ToString();
-            var result = await _productApiClient.SuggestSearch(keyword);
-            if (result.IsSuccessed)
-                return Ok(result.ResultObj);
-            return Ok(result.ResultObj);
-        }
+        //[HttpGet]
+        //public async Task<IActionResult> SuggestSearch()
+        //{
+        //    var keyword = HttpContext.Request.Query["term"].ToString();
+        //    var result = await _productApiClient.SuggestSearch(keyword);
+        //    if (result.IsSuccessed)
+        //        return Ok(result.ResultObj);
+        //    return Ok(result.ResultObj);
+        //}
 
         [HttpGet]
         public async Task<IActionResult> Detail(int id)
@@ -74,15 +74,31 @@ namespace eshopSolution.AdminAPP.Controllers
 
         [HttpPost]
         [Consumes("multipart/form-data")]
-        public async Task<IActionResult> Create([FromForm] ProductCreateRequest request)
+        public async Task<IActionResult> Create(string name, decimal price, decimal orOriginalPrice,
+            int stock, string desDescription, string details, string seoDescription, string seoTitle, string seoAlias, IFormFile thumbnailImage)
         {
-            if (!ModelState.IsValid)
-                return View(request);
+            //[FromForm] ProductCreateRequest request
+            //if (!ModelState.IsValid)
+            //    return View(request);
+            var request = new ProductCreateRequest()
+            {
+                Name= name,
+                Price = price,
+                OrOriginalPrice =orOriginalPrice,
+                Stock =stock,
+                DesDescription =desDescription,
+                Details =details,
+                SeoDescription=seoDescription,
+                SeoTitle =seoTitle,
+                SeoAlias =seoAlias,
+                ThumbnailImage = thumbnailImage,
+            };
             var result = await _productApiClient.Created(request);
             if (result.IsSuccessed)
             {
                 TempData["result"] = "Created successfully!";
-                return RedirectToAction("Index", "ProductsApp");
+                //return RedirectToAction("Index", "ProductsApp");
+                return Json (TempData["result"].ToString());
             }
             ModelState.AddModelError("", result.Message);
             return View(request);
