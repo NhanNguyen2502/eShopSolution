@@ -14,5 +14,6 @@ namespace eShopSolution.ViewModels.Catalog.Product
         public int Stock { set; get; }
         public string ImgLink { get; set; }
         public DateTime DateCreated { set; get; }
+        public int CategoryId { set; get; }
     }
 }

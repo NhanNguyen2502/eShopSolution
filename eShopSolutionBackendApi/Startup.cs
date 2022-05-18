@@ -1,4 +1,5 @@
 using eShopSolutio.Utilities.Contains;
+using eShopSolution.Application.Catalog.Category;
 using eShopSolution.Application.Catalog.Products;
 using eShopSolution.Application.Common;
 using eShopSolution.Application.System.Languages;
@@ -55,6 +56,7 @@ namespace eShopSolutionBackendApi
             services.AddTransient<RoleManager<AppRole>, RoleManager<AppRole>>();
             services.AddTransient<IRoleService, RoleService>();
             services.AddTransient<ILanguageService, LanguageService>();
+            services.AddTransient<ICategoryService, CategoryService>();
             //Add FluentValidation
             services.AddTransient<IValidator<LoginRequest>, LoginRequestValidator>();
             services.AddTransient<IValidator<RegisterRequest>, RegisterRequestValidator>();
@@ -142,7 +144,6 @@ namespace eShopSolutionBackendApi
             app.UseAuthentication();
             app.UseRouting();
             app.UseAuthorization();
-
             //Add Swagger
             app.UseSwagger();
 

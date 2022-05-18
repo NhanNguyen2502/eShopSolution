@@ -86,7 +86,7 @@ namespace eshopSolution.AdminAPP.Service
             client.BaseAddress = new Uri(_configuration["BaseAddress"]);
             client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", session);
             var reponse = await client.GetAsync($"/api/products/getproductpaging?Keyword={request.Keyword}"
-                + $"&LanguageId={request.LanguageId}"
+                + $"&LanguageId={request.LanguageId}&&CategoryId={request.CategoryId}"
                 + $"&PageIndex={request.PageIndex}&PageSize={request.PageSize}");
             var body = await reponse.Content.ReadAsStringAsync();
             return JsonConvert.DeserializeObject<ApiSuccessResult<PagedResult<ProductViewModel>>>(body);
