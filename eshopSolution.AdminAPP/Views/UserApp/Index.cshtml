@@ -15,24 +15,82 @@
         setTimeout(function () {
             $('#msgAlert').fadeOut('slow');
         }, 2000);
+
+        var ConfirmDelete = function (userid) {
+            console.log(userid);
+            $("#hideuserid").val(userid);
+            $("#deleteuserModal").modal('show');
+        }
+
+        var Close = function () {
+            $("#myModal").modal('hide');
+            $('#myModal').insertAfter($('body'));
+        }
+
+        var DeleteUser = function () {
+            $("#deleteuserModal").hide();
+            var userId = $("#hideuserid").val();           
+            $.ajax({
+                type: "POST",
+                url: "/UserApp/Delete",
+                data: { id: userId },
+                success: function (result) {                                   
+                    $("#deleteuserModal").modal("hide");                     
+                    $("#row_" + userId).remove();
+                    $("#notificationDeleted").css("display", "block");
+                    setTimeout(function () {
+                        $("#notificationDeleted").fadeOut('slow');
+                        //window.location.href = "/ProductsApp/Index/";
+                    }, 4000);
+                },
+                error: function () {
+                    alert("Error");
+                }
+
+            });
+        }
     </script>
 }
 
+<input type="hidden" id="hideuserid" />
+<div class="modal" id="deleteuserModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <h4>Are you sure ? You want to delete this. </h4>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="DeleteUser()">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="row alert alert-success" style="margin-top: 10px; float: right; width: 10%; margin-right: 30px; display:none" id="notificationDeleted">
+    Delete successfully!
+</div>
+<div class="row" style="margin-top: 10px; float: right; width: 20%; ">
+
+    @if (TempData["result"] != null)
+    {
+        <div id="msgAlert" class="alert alert-success" role="alert">
+            @ViewBag.SuccessMsg
+        </div>
+    }
+</div>
 <div class="container-fluid px-4">
     <h1 class="mt-4">Danh Sách Người Dùng</h1>
     <ol class="breadcrumb mb-4">
         <li class="breadcrumb-item active">Danh Sách Người Dùng</li>
     </ol>
-    <div class="row">
-        <div class="col-md-6" style="height:auto">
-            @if (TempData["result"] != null)
-            {
-                <div id="msgAlert" class="alert alert-success" role="alert">
-                    @ViewBag.SuccessMsg
-                </div>
-            }
-        </div>
-    </div>
 
     <div class="card mb-4">
         <div class="card mb-12">
@@ -82,7 +140,7 @@
                     <tbody>
                         @foreach (var item in Model.Items)
                         {
-                            <tr>
+                            <tr id="row_@item.Id">
                                 <td>
                                     @Html.DisplayFor(modelItem => item.UserName)
                                 </td>
@@ -98,8 +156,9 @@
                                 <td>
                                     @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
                                     @Html.ActionLink("Detail", "Detail", new { id = item.Id }) |
-                                    @Html.ActionLink("Delete", "Delete", new { id = item.Id }) |
-                                    @Html.ActionLink("Roles Assign", "RolesAssign", new { id = item.Id })
+                                    @*@Html.ActionLink("Delete", "Delete", new { id = item.Id }) |*@
+                                    @Html.ActionLink("Roles Assign", "RolesAssign", new { id = item.Id }) |
+                                    <a class="btn btn-danger" onclick="ConfirmDelete('@item.Id')">Delete <i class="glyphicon-trash"></i>  </a>
                                 </td>
                             </tr>
                         }

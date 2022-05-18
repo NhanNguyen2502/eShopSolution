@@ -18,48 +18,75 @@
 
         var ConfirmDelete = function (EmployeeId) {
             console.log(EmployeeId);
-            $("#hiddenEmployeeId").val(EmployeeId);
-            $("#myModal").modal('show');
+            $("#hiddenProductId").val(EmployeeId);
+            $("#DeleteProduct").modal('show');
         }
 
         var Close = function () {
-            $("#myModal").modal('hide');
-            $('#myModal').insertAfter($('body'));
+            $("#DeleteProduct").modal('hide');
+            $('#DeleteProduct').insertAfter($('body'));
         }
 
-        var DeleteEmployee = function () {
-            $("#myModal").hide();
-            var empId = $("#hiddenEmployeeId").val();
-            console.log(empId);
+        var DeleteProduct= function () {
+            $("#DeleteProduct").hide();
+            var ProductID = $("#hiddenProductId").val();            
             $.ajax({
                 type: "POST",
                 url: "/ProductsApp/Delete",
-                data: { id: empId },
-                success: function (result) {
-                    console.log(result);
-                    $("#loaderDiv").hide();
-                    $("#myModal").modal("hide");
-                    alert(result);
-                    window.location.href = "/ProductsApp/Index/";
-                    $("#row_" + empId).remove();
+                data: { id: ProductID },
+                success: function (result) {                    
+                    $("#DeleteProduct").modal("hide");                                 
+                    $("#row_" + ProductID).remove();
+                    $("#notificationDeleted").css("display", "block");
+                    setTimeout(function () {
+                        $("#notificationDeleted").fadeOut('slow');
+                        //window.location.href = "/ProductsApp/Index/";
+                    }, 4000);
                 },
                 error: function () {
                     alert("Error");
                 }
 
-            });            
+            });
+        }
+        var ConfirmCreate = function () {
+            $("#createProduct").modal('show');           
         }
        
+        var crProduct = function () {
+            var form = $(crForm)[0];
+            var getdata = new FormData(form);          
+            $.ajax({
+                type: "POST",
+                url: "/ProductsApp/Create",
+                data: getdata,
+                processData: false,
+                contentType: false,
+                success: function (result) {                                
+                    $("#createProduct").modal("hide");                    
+                    $("#notificationCreated").css("display", "block");
+                    setTimeout(function () {
+                        $("#notificationCreated").fadeOut('slow');
+                        window.location.href = "/ProductsApp/Index/";
+                    }, 5000);
+                    
+                },
+                error: function () {
+                    alert("Error");
+                }
+
+            });
+        }
     </script>
 }
 
-<input type="hidden" id="hiddenEmployeeId" />
-<div class="modal" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" >
+<input type="hidden" id="hiddenProductId" />
+<div class="modal" id="DeleteProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="exampleModalLabel">Delete Product</h5>
-                <button  type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -68,29 +95,150 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary" onclick="DeleteEmployee()">Delete</button>
+                <button type="button" class="btn btn-primary" onclick="DeleteProduct()">Delete</button>
             </div>
         </div>
     </div>
 </div>
 
+<div class="modal" id="createProduct" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Create Product</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="Create" enctype="multipart/form-data" method="post" id="crForm">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <table class="table table-bordered" style="width:auto">
+                        <tr>
+                            <th class="col-sm-2">
+                                <label  class="control-label">Name</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="name" class="form-control" type="text" />
+                                <span  class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="col-sm-2">
+                                <label class="control-label">Price</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="price" type="number" class="form-control" />
+                                <span  class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="col-sm-2">
+                                <label class="control-label">OrOriginalPrice</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="orOriginalPrice" class="form-control" type="number" />
+                                <span  class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="col-sm-2">
+                                <label  class="control-label">Stock</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="stock" class="form-control" type="number" />
+                                <span  class="text-danger"></span>
+                            </td>
+                        </tr>
 
+                        <tr>
+                            <th class="col-sm-2">
+                                <label class="control-label">Details</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="details" class="form-control" />
+                                <span  class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="col-sm-2">
+                                <label class="control-label">DesDescription</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="desDescription" class="form-control" />
+                                <span class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="col-sm-2">
+                                <label class="control-label">SeoTitle</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="seoTitle" class="form-control" />
+                                <span  class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="col-sm-2">
+                                <label class="control-label">SeoDescription</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="seoDescription" class="form-control" />
+                                <span  class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="col-sm-2">
+                                <label class="control-label">SeoAlias</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="seoAlias" class="form-control" />
+                                <span class="text-danger"></span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="col-sm-2">
+                                <label class="control-label">ThumbnailImage</label>
+                            </th>
+                            <td class="col-sm-10">
+                                <input name="thumbnailImage" class="form-control" type="file" />
+                                <span  class="text-danger"></span>
+                            </td>
+                        </tr>
+                    </table>                   
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" onclick="crProduct()">Create</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row alert alert-success" style="margin-top: 10px; float: right; width: 10%; margin-right: 30px; display:none" id="notificationCreated">
+    Created successfully!
+</div>
+<div class="row alert alert-success" style="margin-top: 10px; float: right; width: 10%; margin-right: 30px; display:none" id="notificationDeleted">
+    Delete successfully!
+</div>
+<div class="row" style="margin-top: 10px; float: right; width: 10%; margin-right: 30px;">
+    
+        @if (TempData["result"] != null)
+        {
+            <div id="msgAlert" class="alert alert-success" role="alert">
+                @ViewBag.SuccessMsg
+            </div>
+        }
+ 
+</div>
 <div class="container-fluid px-4">
     <h1>Danh Sách Sản Phẩm</h1>
     <div id="PlaceHolderHere"></div>
     <p>
-        <a asp-action="Create">Create New Product</a>
+        @*<a asp-action="Create">Create New Product</a>*@       
+        <button class="btn btn-success" onclick="ConfirmCreate()">Create New Product</button>
     </p>
-    <div class="row">
-        <div class="col-md-6" style="height:auto">
-            @if (TempData["result"] != null)
-            {
-                <div id="msgAlert" class="alert alert-success" role="alert">
-                    @ViewBag.SuccessMsg
-                </div>
-            }
-        </div>
-    </div>
+    
     <div class="card mb-4">
         <div class="card mb-12">
             <div class="card-header">

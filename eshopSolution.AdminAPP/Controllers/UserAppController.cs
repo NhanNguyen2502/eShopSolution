@@ -95,23 +95,24 @@ namespace eshopSolution.AdminAPP.Controllers
             return View(request);
         }
 
-        [HttpGet]
-        public IActionResult Delete(Guid id)
-        {
-            return View(new UserDeleteRequest()
-            {
-                Id = id
-            });
-        }
+        //[HttpGet]
+        //public IActionResult Delete(Guid id)
+        //{
+        //    return View(new UserDeleteRequest()
+        //    {
+        //        Id = id
+        //    });
+        //}
 
         [HttpPost]
-        public async Task<IActionResult> Delete(UserDeleteRequest request)
+        public async Task<IActionResult> Delete(Guid id)
         {
-            var result = await _iuserApiClient.DeleteUser(request.Id);
+            var result = await _iuserApiClient.DeleteUser(id);
             if (result.IsSuccessed)
             {
                 TempData["result"] = "Delete successfully!";
-                return RedirectToAction("Index");
+                //return RedirectToAction("Index");
+                return Json(TempData["result"].ToString());
             }
 
             ModelState.AddModelError("", result.Message);
