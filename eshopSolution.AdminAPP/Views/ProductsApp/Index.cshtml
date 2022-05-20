@@ -320,7 +320,7 @@
                                 <td>
                                     @Html.ActionLink("Edit", "Update", new { id = item.Id }) |
                                     @Html.ActionLink("Detail", "Detail", new { id = item.Id }) |
-                                    @*@Html.ActionLink("Delete", "Delete", new { Id = item.Id })*@
+                                    @Html.ActionLink("AssignCategory", "AssignCategory", new { Id = item.Id }) |
                                     <a class="btn btn-danger" onclick="ConfirmDelete('@item.Id')">Delete <i class="glyphicon-trash"></i>  </a>
                                 </td>
                             </tr>

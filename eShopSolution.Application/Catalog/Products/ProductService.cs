@@ -141,53 +141,57 @@ namespace eShopSolution.Application.Catalog.Products
         {
             try
             { // Step1: Select Join
-                //var query = from p in _Context.Products
-                //            join pt in _Context.ProductTranslations on p.ID equals pt.ProductId
-                //            join pi in _Context.ProductImages on p.ID equals pi.ProductId
-                //            where pt.LanguageId == request.LanguageId && pi.IsDefault == true
-                //            select new { p, pi, pt };
+                var query = from p in _Context.Products
+                            join pt in _Context.ProductTranslations on p.ID equals pt.ProductId
+                            join pi in _Context.ProductImages on p.ID equals pi.ProductId into pii
+                            from pi in pii.DefaultIfEmpty()
+                            join pic in _Context.ProductInCategories on p.ID equals pic.ProductId into piic
+                            from pic in piic.DefaultIfEmpty()
+                            join c in _Context.Categories on pic.CategoryId equals c.ID into cic
+                            from c in cic.DefaultIfEmpty()
+                            where pt.LanguageId == request.LanguageId && pi.IsDefault == true
+                            select new { p, pi, pic, pt, c };
 
-                var query = (from p in _Context.Products
-                             from pt in _Context.ProductTranslations
-                             .Where(x => x.ProductId == p.ID && x.LanguageId == request.LanguageId)
-                             from pi in _Context.ProductImages
-                             .Where(x => x.ProductId == p.ID)
-                             .DefaultIfEmpty()
-                             from pc in _Context.ProductInCategories
-                             .Where(x => x.ProductId == p.ID)
-                             .DefaultIfEmpty()
-                             select new
-                             {
-                                 ProductId = p.ID,
-                                 DateCreated = p.DateCreated,
-                                 Price = p.Price,
-                                 OriginalPrice = p.OriginalPrice,
-                                 Stock = p.Stock,
-                                 Name = pt.Name,
-                                 ImgLink = pi.ImagePath,
-                                 CategorId = pc.CategoryId,
-                             });
+                //var query = (from p in _Context.Products
+                //             from pt in _Context.ProductTranslations
+                //             .Where(x => x.ProductId == p.ID && x.LanguageId == request.LanguageId)
+                //             from pi in _Context.ProductImages
+                //             .Where(x => x.ProductId == p.ID)
+                //             .DefaultIfEmpty()
+                //             from pc in _Context.ProductInCategories
+                //             .Where(x => x.ProductId == p.ID)
+                //             .DefaultIfEmpty()
+                //             select new
+                //             {
+                //                 ProductId = p.ID,
+                //                 DateCreated = p.DateCreated,
+                //                 Price = p.Price,
+                //                 OriginalPrice = p.OriginalPrice,
+                //                 Stock = p.Stock,
+                //                 Name = pt.Name,
+                //                 ImgLink = pi.ImagePath,
+                //                 CategorId = pc.CategoryId,
+                //             });
 
                 var isCheck = string.IsNullOrEmpty(request.Keyword);
                 //Step2: Filter
                 if (!isCheck)
-                    query = query.Where(x => x.Name.Contains(request.Keyword));
+                    query = query.Where(x => x.pt.Name.Contains(request.Keyword));
                 if (request.CategoryId != null && request.CategoryId != 0)
                 {
-                    query = query.Where(x => x.CategorId == request.CategoryId);
+                    query = query.Where(x => x.pic.CategoryId == request.CategoryId);
                 }
                 //Step3: Paging
                 int TotalRow = await query.CountAsync();
                 var products = await query.Select(x => new ProductViewModel()
                 {
-                    Id = x.ProductId,
-                    Name = x.Name,
-                    DateCreated = x.DateCreated,
-                    OriginalPrice = x.OriginalPrice,
-                    Price = x.Price,
-                    Stock = x.Stock,
-                    CategoryId = x.CategorId.ToString() !=null ? x.CategorId: 0,
-                    ImgLink = x.ImgLink != null ? _storageService.GetFileUrl(x.ImgLink) : _storageService.GetFileUrl("faf40bd2-7085-49cd-ae33-234fa2980aba.png"), //x.pi.ImagePath,
+                    Id = x.p.ID,
+                    Name = x.pt.Name,
+                    DateCreated = x.p.DateCreated,
+                    OriginalPrice = x.p.OriginalPrice,
+                    Price = x.p.Price,
+                    Stock = x.p.Stock,
+                    ImgLink = x.pi.ImagePath != null ? _storageService.GetFileUrl(x.pi.ImagePath) : _storageService.GetFileUrl("faf40bd2-7085-49cd-ae33-234fa2980aba.png"), //x.pi.ImagePath,
                 }).ToListAsync();
                 var productsort = products.OrderByDescending(x => x.DateCreated);
                 var data = productsort.Skip((request.PageIndex - 1) * request.PageSize)
@@ -231,6 +235,12 @@ namespace eShopSolution.Application.Catalog.Products
             //var catagory = await _Context.ProductInCategories.FirstOrDefaultAsync(x => x.ProductId == product.ID);
             var productranlation = await _Context.ProductTranslations.FirstOrDefaultAsync(a => a.ProductId == product.ID &&
             a.LanguageId == LanguageId);
+            var categories = await (from c in _Context.Categories
+                                    join ct in _Context.CategoryTranslations on c.ID equals ct.CategoryId
+                                    join pic in _Context.ProductInCategories on c.ID equals pic.CategoryId
+                                    where ct.LanguageId == LanguageId && pic.ProductId == ProductID
+                                    select ct.Name).ToListAsync();
+
             var productdetail = new ProductDetailVM()
             {
                 Id = product.ID,
@@ -243,6 +253,7 @@ namespace eShopSolution.Application.Catalog.Products
                 SeoTitle = productranlation.SeoTitle,
                 DesDescription = productranlation.Description != null ? productranlation.Description : null,
                 LanguageId = productranlation.LanguageId != null ? productranlation.LanguageId : null,
+                Categories = categories
             };
             return new ApiSuccessResult<ProductDetailVM>(productdetail);
         }
@@ -444,6 +455,34 @@ namespace eShopSolution.Application.Catalog.Products
                     Message = ex.Message
                 };
             }
+        }
+
+        public async Task<APIResultMessage<bool>> CategoryAssign(int id, CategoryAssignRequest request)
+        {
+            var product = await _Context.Products.FindAsync(id);
+            if (product == null)
+            {
+                return new ApiErrorResult<bool>("Product dose not exist.");
+            }
+            foreach (var category in request.Categories)
+            {
+                var productIncategory = _Context.ProductInCategories.FirstOrDefault(x => x.CategoryId == int.Parse(category.Id)
+               && x.ProductId == id);
+                if (productIncategory != null && category.Selected == false)
+                {
+                    _Context.ProductInCategories.Remove(productIncategory);
+                }
+                else if (productIncategory == null && category.Selected)
+                {
+                    await _Context.ProductInCategories.AddAsync(new ProductInCategory()
+                    {
+                        ProductId = id,
+                        CategoryId = int.Parse(category.Id),
+                    });
+                }
+            }
+            await _Context.SaveChangesAsync();
+            return new ApiSuccessResult<bool>();
         }
     }
 }

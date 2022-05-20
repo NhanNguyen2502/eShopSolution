@@ -19,5 +19,7 @@ namespace eShopSolution.ViewModels.Catalog.Product
         public string SeoTitle { get; set; }
         public string SeoAlias { get; set; }
         public DateTime DateCreated { get; set; }
+
+        public List<string> Categories { get; set; } //= new List<string>();
     }
 }

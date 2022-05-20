@@ -10,8 +10,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using HttpGetAttribute = Microsoft.AspNetCore.Mvc.HttpGetAttribute;
-using HttpPostAttribute = Microsoft.AspNetCore.Mvc.HttpPostAttribute;
 
 namespace eshopSolution.AdminAPP.Controllers
 {
@@ -162,7 +160,7 @@ namespace eshopSolution.AdminAPP.Controllers
         //    };
         //    return PartialView("_DeleteProductModelPartial", delete);
         //}
-        [HttpPost]
+        [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _productApiClient.Delete(id);
@@ -174,6 +172,45 @@ namespace eshopSolution.AdminAPP.Controllers
             }
             ModelState.AddModelError("", result.Message);
             return View();
+        }
+
+        private async Task<CategoryAssignRequest> GetCategory(int id)
+        {
+            var languageId = HttpContext.Session.GetString(SystemConstains.AppSetting.DefaultLanguageIdsys);
+            var productObj = await _productApiClient.GetProductId(id);
+            var Categories = await _categoryApiClient.GetAll(languageId);
+            var categoryAssign = new CategoryAssignRequest();
+            foreach (var category in Categories.ResultObj)
+            {
+                categoryAssign.Categories.Add(new SelectItem()
+                {
+                    Id = category.Id.ToString(),
+                    Name = category.Name,
+                    Selected = productObj.ResultObj.Categories.Contains(category.Name),
+                });
+            }
+            return categoryAssign;
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> AssignCategory(int id)
+        {
+            var getcategaries = await GetCategory(id);
+            return View(getcategaries);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> AssignCategory(CategoryAssignRequest request)
+        {
+            var result = await _productApiClient.CategoryAssign(request.id, request);
+            if (result.IsSuccessed)
+            {
+                TempData["result"] = "Assign Successfully!";
+                return RedirectToAction("Index");
+            }
+            ModelState.AddModelError("", result.Message);
+            var roleAssignRequst = await GetCategory(request.id);
+            return View(roleAssignRequst);
         }
     }
 }
