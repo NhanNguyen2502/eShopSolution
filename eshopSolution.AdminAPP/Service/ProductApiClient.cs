@@ -31,6 +31,21 @@ namespace eshopSolution.AdminAPP.Service
             _httpContextAccessor = httpContextAccessor;
         }
 
+        public async Task<APIResultMessage<bool>> CategoryAssign(int Id, CategoryAssignRequest request)
+        {
+            var session = _httpContextAccessor.HttpContext.Session.GetString("Token");
+            var json = JsonConvert.SerializeObject(request);
+            var httpcontent = new StringContent(json, Encoding.UTF8, "application/json");
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", session);
+            client.BaseAddress = new Uri(_configuration[SystemConstains.AppSetting.BaseAddresssys]);
+            var reponse = await client.PutAsync($"api/products/categories/{Id}/category", httpcontent);
+            var body = await reponse.Content.ReadAsStringAsync();
+            if (reponse.IsSuccessStatusCode)
+                return JsonConvert.DeserializeObject<ApiSuccessResult<bool>>(body);
+            return JsonConvert.DeserializeObject<ApiErrorResult<bool>>(body);
+        }
+
         public async Task<APIResultMessage<bool>> Created(ProductCreateRequest request)
         {
             var session = _httpContextAccessor.HttpContext.Session.GetString("Token");

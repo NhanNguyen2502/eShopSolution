@@ -147,5 +147,14 @@ namespace eShopSolutionBackendApi.Controllers
                 return BadRequest();
             }
         }
+
+        [HttpPut("categories/{Id}/category")]
+        public async Task<IActionResult> CategoriesAssign(int Id, [FromBody] CategoryAssignRequest request)
+        {
+            var result = await _IProductService.CategoryAssign(Id, request);
+            if (result.IsSuccessed)
+                return Ok(result);
+            return Ok(result);
+        }
     }
 }

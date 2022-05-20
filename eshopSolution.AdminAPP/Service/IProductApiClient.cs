@@ -21,5 +21,7 @@ namespace eshopSolution.AdminAPP.Service
         public Task<APIResultMessage<bool>> Update(ProductUpdateRequest request);
 
         public Task<APIResultMessage<bool>> Delete(int id);
+
+        public Task<APIResultMessage<bool>> CategoryAssign(int id, CategoryAssignRequest request);
     }
 }

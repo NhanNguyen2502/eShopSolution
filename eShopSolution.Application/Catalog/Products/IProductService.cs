@@ -1,4 +1,5 @@
-﻿using eShopSolution.ViewModels.Catalog.Product;
+﻿using eShopSolution.ViewModels.Catalog.Category;
+using eShopSolution.ViewModels.Catalog.Product;
 using eShopSolution.ViewModels.Catalog.ProductImages;
 using eShopSolution.ViewModels.Catalog.Result;
 using eShopSolution.ViewModels.Common;
@@ -38,5 +39,7 @@ namespace eShopSolution.Application.Catalog.Products
         Task<ResultModel> GetAllCategory(string languageid, GetPublicProductPagingRequest request);
 
         Task<APIResultMessage<List<string>>> Search(string keywork, string LanguageId);
+
+        Task<APIResultMessage<bool>> CategoryAssign(int id, CategoryAssignRequest request);
     }
 }
