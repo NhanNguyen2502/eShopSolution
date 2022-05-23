@@ -14,7 +14,6 @@
     <ProjectReference Include="..\eShopSolutio.Utilities\eShopSolution.Utilities.csproj" />
     <ProjectReference Include="..\eShopSolution.Data\eShopSolution.Data.csproj" />
     <ProjectReference Include="..\eShopSolution.ViewModels\eShopSolution.ViewModels.csproj" />
-    <ProjectReference Include="..\eShopSolution.WebApp\eShopSolution.WebApp.csproj" />
   </ItemGroup>
 
 </Project>

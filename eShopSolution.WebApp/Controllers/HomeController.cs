@@ -1,6 +1,7 @@
-﻿using eshopSolution.AdminAPP.Models;
-using Microsoft.AspNetCore.Authorization;
+﻿using eShopSolution.WebApp.Models;
+using LazZiya.ExpressLocalization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -9,21 +10,21 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace eshopSolution.AdminAPP.Controllers
+namespace eShopSolution.WebApp.Controllers
 {
-    public class HomeController : BaseController
+    public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly ISharedCultureLocalizer _loc;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, ISharedCultureLocalizer loc)
         {
             _logger = logger;
+            _loc = loc;
         }
 
         public IActionResult Index()
         {
-            var user = User.Identity.Name;
-            var user1 = User.Claims.ToList();
             return View();
         }
 
@@ -38,11 +39,15 @@ namespace eshopSolution.AdminAPP.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        [HttpPost]
-        public IActionResult Language(NavigationViewModel viewModel)
+        public IActionResult OnGetSetCultureCookie(string cltr, string returnUrl)
         {
-            HttpContext.Session.SetString("DefaultLanguageId", viewModel.CurrentLanguageID);
-            return RedirectToAction("Index", "Home");
+            Response.Cookies.Append(
+                CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(cltr)),
+                new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1) }
+                );
+
+            return LocalRedirect(returnUrl);
         }
     }
 }

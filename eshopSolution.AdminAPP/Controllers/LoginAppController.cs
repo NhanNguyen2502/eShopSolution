@@ -31,6 +31,10 @@ namespace eshopSolution.AdminAPP.Controllers
         [HttpGet]
         public IActionResult Login()
         {
+            if (TempData["result"] != null)
+            {
+                ViewBag.SuccessMsg = TempData["result"];
+            }
             return View();
         }
 
@@ -48,16 +52,26 @@ namespace eshopSolution.AdminAPP.Controllers
             var userprincical = this.ValidateToken((string)token.ResultObj);
             var authproperties = new AuthenticationProperties
             {
-                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(10),
+                ExpiresUtc = DateTimeOffset.UtcNow.AddMinutes(30),
                 IsPersistent = true
             };
             HttpContext.Session.SetString("DefaultLanguageId", _configuration["DefaultLanguageId"]);
             HttpContext.Session.SetString("Token", token.ResultObj);
-            await HttpContext.SignInAsync(
-                CookieAuthenticationDefaults.AuthenticationScheme,
-                userprincical,
-                authproperties);
-            return RedirectToAction("Index", "Home");
+            var claims = userprincical.Claims.ToList();
+            foreach (var claim in claims)
+            {
+                if (claim != null && claim.ToString().Contains("admin"))
+                {
+                    HttpContext.Session.SetString("Roles", claim.ToString());
+                    await HttpContext.SignInAsync(
+               CookieAuthenticationDefaults.AuthenticationScheme,
+               userprincical,
+               authproperties);
+                    return RedirectToAction("Index", "Home");
+                }
+            }
+            TempData["result"] = "User role is not admin.";
+            return RedirectToAction("Login");
         }
 
         private ClaimsPrincipal ValidateToken(string JwtToken)

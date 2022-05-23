@@ -3,6 +3,7 @@ using eShopSolution.ViewModels.Common;
 using eShopSolution.ViewModels.System.Users;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,11 +24,13 @@ namespace eshopSolution.AdminAPP.Controllers
     {
         private readonly IUserApiClient _iuserApiClient;
         private readonly IRoleApiClient _iroleApiClient;
+        private readonly IConfiguration _configuration;
 
-        public UserAppController(IUserApiClient iuserApiClient, IRoleApiClient iroleApiClient)
+        public UserAppController(IUserApiClient iuserApiClient, IRoleApiClient iroleApiClient, IConfiguration configuration)
         {
             _iuserApiClient = iuserApiClient;
             _iroleApiClient = iroleApiClient;
+            _configuration = configuration;
         }
 
         [HttpGet]
@@ -141,24 +144,37 @@ namespace eshopSolution.AdminAPP.Controllers
         [HttpGet]
         public async Task<IActionResult> RolesAssign(Guid Id)
         {
-            var roleAssignRequst = await GetRoleAssignRequest(Id);
-            return View(roleAssignRequst);
+            var roles = HttpContext.Session.GetString("Roles");
+            if (roles != null && roles.Contains("admin"))
+            {
+                var roleAssignRequst = await GetRoleAssignRequest(Id);
+                return View(roleAssignRequst);
+            }
+            TempData["result"] = "The user role is not administrator.";
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
         public async Task<IActionResult> RolesAssign(RoleAssignRequest request)
         {
-            if (!ModelState.IsValid)
-                return View();
-            var result = await _iuserApiClient.RoleAssign(request.Id, request);
-            if (result.IsSuccessed)
+            var roles = HttpContext.Session.GetString("Roles");
+            if (roles != null && roles.Contains("admin"))
+
             {
-                TempData["result"] = "Assign Successfully!";
-                return RedirectToAction("Index", "UserApp");
+                if (!ModelState.IsValid)
+                    return View();
+                var result = await _iuserApiClient.RoleAssign(request.Id, request);
+                if (result.IsSuccessed)
+                {
+                    TempData["result"] = "Assign Successfully!";
+                    return RedirectToAction("Index", "UserApp");
+                }
+                ModelState.AddModelError("", result.Message);
+                var roleAssignRequst = await GetRoleAssignRequest(request.Id);
+                return View(roleAssignRequst);
             }
-            ModelState.AddModelError("", result.Message);
-            var roleAssignRequst = await GetRoleAssignRequest(request.Id);
-            return View(roleAssignRequst);
+            TempData["result"] = "The user role is not administrator.";
+            return RedirectToAction("Index");
         }
 
         private async Task<RoleAssignRequest> GetRoleAssignRequest(Guid Id)
